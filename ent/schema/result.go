@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
@@ -26,7 +24,7 @@ func (Result) Fields() []ent.Field {
 
 func (Result) Edges() []ent.Edge{
 	return []ent.Edge{
-		edge.To("user", User.Type).Unique().Immutable(),
+		edge.From("user", User.Type).Ref("results").Unique().Immutable(),
 		edge.To("word", Word.Type).Unique().Immutable(),
 	}
 }
@@ -34,14 +32,16 @@ func (Result) Edges() []ent.Edge{
 func (Result) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("tested_at_timestamp"),
-		index.Fields("user"),
+		index.Edges("user").Fields("tested_at_timestamp"),
 	}
 }
 
-func (Result) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.Annotation{
-			Options: "using columnar",
-		},
-	}
-}
+// Could implement if switching to pgSQL. Should make retrieving results slightly faster
+
+// func (Result) Annotations() []schema.Annotation {
+// 	return []schema.Annotation{
+// 		entsql.Annotation{
+// 			Options: "using columnar",
+// 		},
+// 	}
+// }

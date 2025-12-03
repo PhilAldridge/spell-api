@@ -24,7 +24,7 @@ func (Group) Fields() []ent.Field {
 func (Group) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("school", School.Type).Ref("groups").Unique(),
-		edge.To("users", School.Type),
+		edge.To("users", User.Type),
 		edge.From("word_lists", WordList.Type).Ref("groups"),
 		edge.From("competitions",Competition.Type).Ref("groups"),
 	}

@@ -24,6 +24,7 @@ func (User) Edges() []ent.Edge {
 		edge.From("schools", School.Type).Ref("admins"),
 		edge.To("owned_school", School.Type).Unique(),
 		edge.From("groups", Group.Type).Ref("users"),
-		edge.From("results", Result.Type).Ref("user"),
+		edge.To("results", Result.Type),
+		edge.To("refresh_tokens", RefreshToken.Type),
 	}
 }
