@@ -16,22 +16,16 @@ import (
 )
 
 type UserService struct {
-    userRepo *repository.UserRepository
-    schoolRepo *repository.SchoolRepository
-    refreshTokenRepo *repository.RefreshTokenRepository
+    repository *repository.Repository
     client *ent.Client
 }
 
 func NewUserService(
-    userRepo *repository.UserRepository,
-    schoolRepo *repository.SchoolRepository,
-    refeshTokenRepo *repository.RefreshTokenRepository,
+    repository *repository.Repository,
     client *ent.Client,
     ) *UserService {
     return &UserService{
-        userRepo:userRepo,
-        schoolRepo: schoolRepo,
-        refreshTokenRepo: refeshTokenRepo,
+        repository: repository,
         client: client}
 }
 
@@ -54,14 +48,17 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
         return nil, apperrors.Internal("unable to start transaction")
     }
 
-    user:= ent.User{
+    userObject:= ent.User{
         Name: req.Name,
         PasswordHash: passwordHash,
         Email: req.Email,
-        AccountType: user.AccountType(*req.AccountType),
+    }
+
+    if req.AccountType != nil {
+        userObject.AccountType = user.AccountType(*req.AccountType)
     }
     
-    newUser, err:= s.userRepo.CreateUser(ctx, tx.Client(),&user, groupIDs,schoolIDs)
+    newUser, err:= s.repository.UserRepository.CreateUser(ctx, tx.Client(),&userObject, groupIDs,schoolIDs)
     if err !=nil {
         tx.Rollback()
 
@@ -69,7 +66,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
     }
 
     if req.NewSchoolName != nil {
-        _, err:= s.schoolRepo.Create(ctx, tx.Client(), req.Name, newUser.ID)
+        _, err:= s.repository.SchoolRepository.Create(ctx, tx.Client(), req.Name, newUser.ID)
         if err != nil {
             tx.Rollback()
 
@@ -89,7 +86,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.LoginResponse, *apperrors.AppError) {
     //Validate request
 
-    user, err := s.userRepo.GetUserByEmail(ctx, s.client, req.Email)
+    user, err := s.repository.UserRepository.GetUserByEmail(ctx, s.client, req.Email)
     if err != nil {
         return nil, apperrors.Unauthorised("invalid credentials")
     }
@@ -113,7 +110,7 @@ func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.L
     tokenHash:= auth.HashRefreshToken(refeshToken)
     expiresAt:= time.Now().Add(24*30*time.Hour)
 
-    err = s.refreshTokenRepo.Create(ctx, s.client, tokenHash,expiresAt,user)
+    err = s.repository.RefreshTokenRepository.Create(ctx, s.client, tokenHash,expiresAt,user)
     if err!= nil {
         //TODO: implement proper logging
         fmt.Println(err)
@@ -134,7 +131,7 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
 
     hash := auth.HashRefreshToken(refreshToken)
 
-    err := s.refreshTokenRepo.IsValid(ctx, s.client, hash, user.ID)
+    err := s.repository.RefreshTokenRepository.IsValid(ctx, s.client, hash, user.ID)
     if err!=nil {
         return nil, err
     }
@@ -149,4 +146,13 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
         AccessToken: accessToken,
         ExpiresIn: accessExpiryMins*60,
     },nil
+}
+
+func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
+    user,err:= s.repository.UserRepository.GetUserByID(ctx,s.client, id)
+    if err != nil {
+        return user,err
+    }
+
+    return user,nil
 }

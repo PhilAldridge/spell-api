@@ -9,10 +9,10 @@ import (
 )
 
 type UserHandler struct {
-	service *service.UserService
+	service *service.Service
 }
 
-func NewUserHandler(service *service.UserService) *UserHandler {
+func NewUserHandler(service *service.Service) *UserHandler {
 	return &UserHandler{service:service}
 }
 
@@ -25,7 +25,7 @@ func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err:= h.service.Register(r.Context(), body)
+	user, err:= h.service.UserService.Register(r.Context(), body)
 	if err!=nil {
 		http.Error(w, err.Message, err.StatusCode)
 
@@ -45,7 +45,7 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err:= h.service.Login(r.Context(), body)
+	res, err:= h.service.UserService.Login(r.Context(), body)
 	if err!=nil {
 		http.Error(w, err.Message, err.StatusCode)
 
@@ -64,7 +64,7 @@ func (h *UserHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res, err:= h.service.RefreshAccess(r.Context(),body.RefreshToken)
+	res, err:= h.service.UserService.RefreshAccess(r.Context(),body.RefreshToken)
 	if err != nil {
 		http.Error(w, err.Message, err.StatusCode)
 
@@ -72,4 +72,12 @@ func (h *UserHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(res)
+}
+
+type Test struct {
+	Hello string `json:"hello"`
+}
+
+func (h *UserHandler) Test(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(Test{Hello: "hello"})
 }

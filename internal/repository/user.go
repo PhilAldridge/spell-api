@@ -23,14 +23,18 @@ func NewUserRepository() *UserRepository {
 
 // Create a new user 
 func (r *UserRepository) CreateUser(ctx context.Context, client *ent.Client, u *ent.User, groupIDs []int, schoolIDs []int) (*ent.User, *apperrors.AppError) {
-    user,err:= client.User.Create().
+    query:= client.User.Create().
         SetName(u.Name).
         SetEmail(u.Email).
         SetPasswordHash(u.PasswordHash).
-		SetAccountType(u.AccountType).
 		AddGroupIDs(groupIDs...).
-		AddSchoolIDs(schoolIDs...).
-        Save(ctx)
+		AddSchoolIDs(schoolIDs...)
+
+	if u.AccountType != "" {
+		query = query.SetAccountType(u.AccountType)
+	}
+
+	user, err := query.Save(ctx)
 	if err !=nil {
 		return nil, apperrors.ParseEntError(err, "unable to create user")
 	}

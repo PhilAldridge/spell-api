@@ -15,7 +15,7 @@ func (User) Fields() []ent.Field {
 		field.String("name").NotEmpty(),
 		field.String("password_hash").Sensitive().NotEmpty(),
 		field.String("email").Unique(),
-		field.Enum("account_type").Values("student","admin").Default("student"),
+		field.Enum("account_type").Optional().Values("student","admin").Default("student"),
 	}
 }
 

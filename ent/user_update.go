@@ -87,6 +87,12 @@ func (_u *UserUpdate) SetNillableAccountType(v *user.AccountType) *UserUpdate {
 	return _u
 }
 
+// ClearAccountType clears the value of the "account_type" field.
+func (_u *UserUpdate) ClearAccountType() *UserUpdate {
+	_u.mutation.ClearAccountType()
+	return _u
+}
+
 // AddSchoolIDs adds the "schools" edge to the School entity by IDs.
 func (_u *UserUpdate) AddSchoolIDs(ids ...int) *UserUpdate {
 	_u.mutation.AddSchoolIDs(ids...)
@@ -331,6 +337,9 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.AccountType(); ok {
 		_spec.SetField(user.FieldAccountType, field.TypeEnum, value)
+	}
+	if _u.mutation.AccountTypeCleared() {
+		_spec.ClearField(user.FieldAccountType, field.TypeEnum)
 	}
 	if _u.mutation.SchoolsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -617,6 +626,12 @@ func (_u *UserUpdateOne) SetNillableAccountType(v *user.AccountType) *UserUpdate
 	return _u
 }
 
+// ClearAccountType clears the value of the "account_type" field.
+func (_u *UserUpdateOne) ClearAccountType() *UserUpdateOne {
+	_u.mutation.ClearAccountType()
+	return _u
+}
+
 // AddSchoolIDs adds the "schools" edge to the School entity by IDs.
 func (_u *UserUpdateOne) AddSchoolIDs(ids ...int) *UserUpdateOne {
 	_u.mutation.AddSchoolIDs(ids...)
@@ -891,6 +906,9 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if value, ok := _u.mutation.AccountType(); ok {
 		_spec.SetField(user.FieldAccountType, field.TypeEnum, value)
+	}
+	if _u.mutation.AccountTypeCleared() {
+		_spec.ClearField(user.FieldAccountType, field.TypeEnum)
 	}
 	if _u.mutation.SchoolsCleared() {
 		edge := &sqlgraph.EdgeSpec{

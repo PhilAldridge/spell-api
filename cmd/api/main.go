@@ -17,6 +17,8 @@ func main() {
 
     client := db.NewClient()
 	srv:= server.New(client)
+
+	
     
     log.Println("API running on :8080")
     http.ListenAndServe(":8080", srv)

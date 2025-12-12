@@ -3818,9 +3818,22 @@ func (m *UserMutation) OldAccountType(ctx context.Context) (v user.AccountType, 
 	return oldValue.AccountType, nil
 }
 
+// ClearAccountType clears the value of the "account_type" field.
+func (m *UserMutation) ClearAccountType() {
+	m.account_type = nil
+	m.clearedFields[user.FieldAccountType] = struct{}{}
+}
+
+// AccountTypeCleared returns if the "account_type" field was cleared in this mutation.
+func (m *UserMutation) AccountTypeCleared() bool {
+	_, ok := m.clearedFields[user.FieldAccountType]
+	return ok
+}
+
 // ResetAccountType resets all changes to the "account_type" field.
 func (m *UserMutation) ResetAccountType() {
 	m.account_type = nil
+	delete(m.clearedFields, user.FieldAccountType)
 }
 
 // AddSchoolIDs adds the "schools" edge to the School entity by ids.
@@ -4224,7 +4237,11 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(user.FieldAccountType) {
+		fields = append(fields, user.FieldAccountType)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -4237,6 +4254,11 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
+	switch name {
+	case user.FieldAccountType:
+		m.ClearAccountType()
+		return nil
+	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
 

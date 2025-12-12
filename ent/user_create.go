@@ -196,9 +196,6 @@ func (_c *UserCreate) check() error {
 	if _, ok := _c.mutation.Email(); !ok {
 		return &ValidationError{Name: "email", err: errors.New(`ent: missing required field "User.email"`)}
 	}
-	if _, ok := _c.mutation.AccountType(); !ok {
-		return &ValidationError{Name: "account_type", err: errors.New(`ent: missing required field "User.account_type"`)}
-	}
 	if v, ok := _c.mutation.AccountType(); ok {
 		if err := user.AccountTypeValidator(v); err != nil {
 			return &ValidationError{Name: "account_type", err: fmt.Errorf(`ent: validator failed for field "User.account_type": %w`, err)}

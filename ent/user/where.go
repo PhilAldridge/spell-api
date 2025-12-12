@@ -283,6 +283,16 @@ func AccountTypeNotIn(vs ...AccountType) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldAccountType, vs...))
 }
 
+// AccountTypeIsNil applies the IsNil predicate on the "account_type" field.
+func AccountTypeIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldAccountType))
+}
+
+// AccountTypeNotNil applies the NotNil predicate on the "account_type" field.
+func AccountTypeNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldAccountType))
+}
+
 // HasSchools applies the HasEdge predicate on the "schools" edge.
 func HasSchools() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
