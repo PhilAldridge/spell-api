@@ -9,14 +9,16 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/apperrors"
 )
 
-type RefreshTokenRepository struct {}
-
-func NewRefreshTokenRepository () *RefreshTokenRepository {
-	return &RefreshTokenRepository{}
+type RefreshTokenRepository struct {
+	client *ent.Client
 }
 
-func (r *RefreshTokenRepository) Create(ctx context.Context, client *ent.Client, tokenHash string, expiresAt time.Time, user *ent.User) *apperrors.AppError {
-	_,err:= client.RefreshToken.Create().
+func NewRefreshTokenRepository (client *ent.Client) *RefreshTokenRepository {
+	return &RefreshTokenRepository{client: client}
+}
+
+func (r *RefreshTokenRepository) Create(ctx context.Context, tokenHash string, expiresAt time.Time, user *ent.User) *apperrors.AppError {
+	_,err:= r.client.RefreshToken.Create().
 		SetTokenHash(tokenHash).
 		SetExpiresAt(expiresAt).
 		SetUser(user).
@@ -29,8 +31,8 @@ func (r *RefreshTokenRepository) Create(ctx context.Context, client *ent.Client,
 	return nil
 }
 
-func (r *RefreshTokenRepository) IsValid(ctx context.Context, client *ent.Client, tokenHash string, userID int) (*apperrors.AppError) {
-	refreshToken, err:= client.RefreshToken.Query().
+func (r *RefreshTokenRepository) IsValid(ctx context.Context, tokenHash string, userID int) (*apperrors.AppError) {
+	refreshToken, err:= r.client.RefreshToken.Query().
 		Where(
 			refreshtoken.TokenHashEQ(tokenHash),
 			refreshtoken.RevokedEQ(false),
@@ -47,3 +49,5 @@ func (r *RefreshTokenRepository) IsValid(ctx context.Context, client *ent.Client
 
 	return nil
 }
+
+// func (r *RefreshTokenRepository) Update(ctx context.Context, )

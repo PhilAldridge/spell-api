@@ -17,16 +17,12 @@ import (
 
 type UserService struct {
     repository *repository.Repository
-    client *ent.Client
 }
 
 func NewUserService(
     repository *repository.Repository,
-    client *ent.Client,
     ) *UserService {
-    return &UserService{
-        repository: repository,
-        client: client}
+    return &UserService{repository: repository}
 }
 
 func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest) (*ent.User, *apperrors.AppError) {
@@ -43,10 +39,11 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
         return nil, apperrors.Internal("password hash failed")
     }
 
-    tx, errTx:= s.client.Tx(ctx);
-    if errTx != nil {
-        return nil, apperrors.Internal("unable to start transaction")
-    }
+    //TODO
+    // tx, errTx:= s.client.Tx(ctx);
+    // if errTx != nil {
+    //     return nil, apperrors.Internal("unable to start transaction")
+    // }
 
     userObject:= ent.User{
         Name: req.Name,
@@ -58,27 +55,27 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
         userObject.AccountType = user.AccountType(*req.AccountType)
     }
     
-    newUser, err:= s.repository.UserRepository.CreateUser(ctx, tx.Client(),&userObject, groupIDs,schoolIDs)
+    newUser, err:= s.repository.UserRepository.CreateUser(ctx,&userObject, groupIDs,schoolIDs)
     if err !=nil {
-        tx.Rollback()
+        // tx.Rollback()
 
         return nil, err
     }
 
     if req.NewSchoolName != nil {
-        _, err:= s.repository.SchoolRepository.Create(ctx, tx.Client(), req.Name, newUser.ID)
+        _, err:= s.repository.SchoolRepository.Create(ctx, req.Name, newUser.ID)
         if err != nil {
-            tx.Rollback()
+            // tx.Rollback()
 
             return nil,err
         }
     }
 
-    commitErr := tx.Commit()
+    // commitErr := tx.Commit()
 
-    if commitErr != nil {
-        return newUser, apperrors.Internal(commitErr.Error())
-    }
+    // if commitErr != nil {
+    //     return newUser, apperrors.Internal(commitErr.Error())
+    // }
 
     return newUser, nil
 }
@@ -86,7 +83,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.LoginResponse, *apperrors.AppError) {
     //Validate request
 
-    user, err := s.repository.UserRepository.GetUserByEmail(ctx, s.client, req.Email)
+    user, err := s.repository.UserRepository.GetUserByEmail(ctx, req.Email)
     if err != nil {
         return nil, apperrors.Unauthorised("invalid credentials")
     }
@@ -110,17 +107,32 @@ func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.L
     tokenHash:= auth.HashRefreshToken(refeshToken)
     expiresAt:= time.Now().Add(24*30*time.Hour)
 
-    err = s.repository.RefreshTokenRepository.Create(ctx, s.client, tokenHash,expiresAt,user)
+    err = s.repository.RefreshTokenRepository.Create(ctx, tokenHash,expiresAt,user)
     if err!= nil {
         //TODO: implement proper logging
         fmt.Println(err)
     }
 
+    // TODO Also return user information
     return &dtos.LoginResponse{
         RefreshToken: refeshToken,
         AccessToken: accessToken,
         ExpiresIn: accessExpiryMins*60,
     },nil
+}
+
+func (s *UserService) Logout(ctx context.Context, req dtos.LoginRequest) (*apperrors.AppError) {
+    user, ok := auth.UserFromContext(ctx)
+	if !ok {
+		return apperrors.BadRequest("could not find user information")
+	}
+    fmt.Println(user)
+
+    // TODO
+    // Revoke token, returning error if not available
+
+
+    return nil
 }
 
 func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*dtos.RefreshAccessResponse,*apperrors.AppError) {
@@ -131,7 +143,7 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
 
     hash := auth.HashRefreshToken(refreshToken)
 
-    err := s.repository.RefreshTokenRepository.IsValid(ctx, s.client, hash, user.ID)
+    err := s.repository.RefreshTokenRepository.IsValid(ctx, hash, user.ID)
     if err!=nil {
         return nil, err
     }
@@ -149,7 +161,7 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
-    user,err:= s.repository.UserRepository.GetUserByID(ctx,s.client, id)
+    user,err:= s.repository.UserRepository.GetUserByID(ctx, id)
     if err != nil {
         return user,err
     }

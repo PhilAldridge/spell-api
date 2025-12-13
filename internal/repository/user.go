@@ -15,15 +15,16 @@ type ListParams struct {
 }
 
 type UserRepository struct {
+	client *ent.Client
 }
 
-func NewUserRepository() *UserRepository {
-	return &UserRepository{}
+func NewUserRepository(client *ent.Client) *UserRepository {
+	return &UserRepository{client: client}
 }
 
 // Create a new user 
-func (r *UserRepository) CreateUser(ctx context.Context, client *ent.Client, u *ent.User, groupIDs []int, schoolIDs []int) (*ent.User, *apperrors.AppError) {
-    query:= client.User.Create().
+func (r *UserRepository) CreateUser(ctx context.Context, u *ent.User, groupIDs []int, schoolIDs []int) (*ent.User, *apperrors.AppError) {
+    query:= r.client.User.Create().
         SetName(u.Name).
         SetEmail(u.Email).
         SetPasswordHash(u.PasswordHash).
@@ -42,8 +43,8 @@ func (r *UserRepository) CreateUser(ctx context.Context, client *ent.Client, u *
     return user, nil
 }
 
-func (r *UserRepository) GetUserByID(ctx context.Context, client *ent.Client, id int) (*ent.User, *apperrors.AppError) {
-	user,err:= client.User.Get(ctx,id)
+func (r *UserRepository) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
+	user,err:= r.client.User.Get(ctx,id)
 	if err !=nil {
 		return nil, apperrors.ParseEntError(err,"unable to get user")
 	}
@@ -51,8 +52,8 @@ func (r *UserRepository) GetUserByID(ctx context.Context, client *ent.Client, id
 	return user,nil
 }
 
-func (r *UserRepository) GetUserByEmail(ctx context.Context, client *ent.Client, email string) (*ent.User, *apperrors.AppError) {
-	user, err:= client.User.Query().
+func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*ent.User, *apperrors.AppError) {
+	user, err:= r.client.User.Query().
 		Where(user.EmailEQ(email)).
 		Only(ctx)
 	

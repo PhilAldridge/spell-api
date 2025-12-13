@@ -13,14 +13,18 @@ import (
 func New(client *ent.Client) http.Handler {
 	r:= chi.NewRouter()
 
-	repository := repository.NewRepository()
+	repository := repository.NewRepository(client)
 
-	service:= service.NewService(repository, client)
+	service:= service.NewService(repository)
 
 	userHandler:= handlers.NewUserHandler(service)
 
 	r.Route("/users", func(r chi.Router) {
 		r.Route("/test", func(r chi.Router) {
+			r.Use(service.AuthMiddleware)
+			r.Get("/", userHandler.Test)
+		})
+		r.Route("/logout", func(r chi.Router) {
 			r.Use(service.AuthMiddleware)
 			r.Get("/", userHandler.Test)
 		})

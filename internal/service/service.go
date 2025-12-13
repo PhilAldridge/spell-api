@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/PhilAldridge/spell-api/ent"
 	"github.com/PhilAldridge/spell-api/internal/repository"
 )
 
@@ -9,8 +8,8 @@ type Service struct {
 	UserService UserService
 }
 
-func NewService(repository *repository.Repository, client *ent.Client) *Service {
+func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		UserService: *NewUserService(repository, client),
+		UserService: *NewUserService(repository),
 	}
 }
