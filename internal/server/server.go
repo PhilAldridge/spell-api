@@ -33,5 +33,13 @@ func New(client *ent.Client) http.Handler {
 		r.Post("/refresh", userHandler.RefreshAccess)
 	})
 
+	r.Route("/school/{schoolId}", func(r chi.Router) {
+			//Groups, words, wordlists, users, competitions
+	})
+
+	r.Route("/teacher/school/{schoolId}", func(r chi.Router) {
+		//Groups, words, wordlists, users, competitions
+	})
+
 	return r
 }
