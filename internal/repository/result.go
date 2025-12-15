@@ -8,18 +8,18 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/apperrors"
 )
 
-type ResultRepository struct {
+type resultRepository struct {
 	client *ent.Client
 }
 
-func NewResultRepository(client *ent.Client) *ResultRepository {
-	return &ResultRepository{
+func NewResultRepository(client *ent.Client) *resultRepository {
+	return &resultRepository{
 		client: client,
 	}
 }
 
-func (r *ResultRepository) Create(ctx context.Context, result *ent.Result, userID int, wordID int) *apperrors.AppError {
-	err:= r.client.Result.Create().
+func (r *resultRepository) Create(ctx context.Context, result *ent.Result, userID int, wordID int) *apperrors.AppError {
+	err := r.client.Result.Create().
 		SetCorrect(result.Correct).
 		SetTestedAtTimestamp(time.Now().UTC()).
 		SetUserID(userID).

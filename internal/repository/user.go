@@ -16,16 +16,16 @@ type ListParams struct {
 	CompetitionID *int
 }
 
-type UserRepository struct {
+type userRepository struct {
 	client *ent.Client
 }
 
-func NewUserRepository(client *ent.Client) *UserRepository {
-	return &UserRepository{client: client}
+func NewUserRepository(client *ent.Client) *userRepository {
+	return &userRepository{client: client}
 }
 
 // Create a new user
-func (r *UserRepository) CreateUser(ctx context.Context, u *ent.User) (*ent.User, *apperrors.AppError) {
+func (r *userRepository) CreateUser(ctx context.Context, u *ent.User) (*ent.User, *apperrors.AppError) {
 	query := r.client.User.Create().
 		SetName(u.Name).
 		SetEmail(u.Email).
@@ -43,7 +43,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *ent.User) (*ent.User
 	return user, nil
 }
 
-func (r *UserRepository) GetStudentByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
+func (r *userRepository) GetStudentByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
 	user, err := r.client.User.Query().
 		Where(user.IDEQ(id), user.AccountTypeEQ(user.AccountTypeStudent)).
 		WithGroups(func(gq *ent.GroupQuery) {
@@ -67,7 +67,7 @@ func (r *UserRepository) GetStudentByID(ctx context.Context, id int) (*ent.User,
 	return user, nil
 }
 
-func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*ent.User, *apperrors.AppError) {
+func (r *userRepository) GetUserByEmail(ctx context.Context, email string) (*ent.User, *apperrors.AppError) {
 	user, err := r.client.User.Query().
 		Where(user.EmailEQ(email)).
 		Only(ctx)
@@ -79,8 +79,8 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*ent
 	return user, nil
 }
 
-func (r *UserRepository) JoinGroup(ctx context.Context, userID int, groupID int ) *apperrors.AppError {
-	err:= r.client.User.UpdateOneID(userID).AddGroupIDs(groupID).Exec(ctx)
+func (r *userRepository) JoinGroup(ctx context.Context, userID int, groupID int) *apperrors.AppError {
+	err := r.client.User.UpdateOneID(userID).AddGroupIDs(groupID).Exec(ctx)
 	if err != nil {
 		return apperrors.ParseEntError(err, "could not join group")
 	}
@@ -88,8 +88,8 @@ func (r *UserRepository) JoinGroup(ctx context.Context, userID int, groupID int 
 	return nil
 }
 
-func (r *UserRepository) JoinSchool(ctx context.Context, userID int, schoolID int ) *apperrors.AppError {
-	err:= r.client.User.UpdateOneID(userID).AddSchoolIDs(schoolID).Exec(ctx)
+func (r *userRepository) JoinSchool(ctx context.Context, userID int, schoolID int) *apperrors.AppError {
+	err := r.client.User.UpdateOneID(userID).AddSchoolIDs(schoolID).Exec(ctx)
 	if err != nil {
 		return apperrors.ParseEntError(err, "could not join school")
 	}
@@ -97,8 +97,8 @@ func (r *UserRepository) JoinSchool(ctx context.Context, userID int, schoolID in
 	return nil
 }
 
-func (r *UserRepository) LeaveGroup(ctx context.Context, userID int, groupID int ) *apperrors.AppError {
-	err:= r.client.User.UpdateOneID(userID).RemoveGroupIDs(groupID).Exec(ctx)
+func (r *userRepository) LeaveGroup(ctx context.Context, userID int, groupID int) *apperrors.AppError {
+	err := r.client.User.UpdateOneID(userID).RemoveGroupIDs(groupID).Exec(ctx)
 	if err != nil {
 		return apperrors.ParseEntError(err, "could not Leave group")
 	}
@@ -106,8 +106,8 @@ func (r *UserRepository) LeaveGroup(ctx context.Context, userID int, groupID int
 	return nil
 }
 
-func (r *UserRepository) LeaveSchool(ctx context.Context, userID int, schoolID int ) *apperrors.AppError {
-	err:= r.client.User.UpdateOneID(userID).RemoveSchoolIDs(schoolID).Exec(ctx)
+func (r *userRepository) LeaveSchool(ctx context.Context, userID int, schoolID int) *apperrors.AppError {
+	err := r.client.User.UpdateOneID(userID).RemoveSchoolIDs(schoolID).Exec(ctx)
 	if err != nil {
 		return apperrors.ParseEntError(err, "could not Leave school")
 	}

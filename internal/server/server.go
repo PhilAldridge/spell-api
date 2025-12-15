@@ -17,21 +17,21 @@ func New(client *ent.Client) http.Handler {
 
 	service:= service.NewService(repository)
 
-	userHandler:= handlers.NewUserHandler(service)
+	handler:= handlers.NewHandler(service)
 
 	r.Route("/users", func(r chi.Router) {
 		r.Route("/join", func(r chi.Router) {
 			r.Use(service.AuthMiddleware)
-			r.Get("/", userHandler.Test)
-			r.Post("/", userHandler.JoinGroupOrSchool)
+			r.Get("/", handler.UserHandler.Test)
+			r.Post("/", handler.UserHandler.JoinGroupOrSchool)
 		})
 		r.Route("/logout", func(r chi.Router) {
 			r.Use(service.AuthMiddleware)
-			r.Get("/", userHandler.Test)
+			r.Get("/", handler.UserHandler.Test)
 		})
-		r.Post("/register", userHandler.Register)
-		r.Post("/login", userHandler.Login)
-		r.Post("/refresh", userHandler.RefreshAccess)
+		r.Post("/register", handler.UserHandler.Register)
+		r.Post("/login", handler.UserHandler.Login)
+		r.Post("/refresh", handler.UserHandler.RefreshAccess)
 	})
 
 	r.Route("/school/{schoolId}", func(r chi.Router) {

@@ -10,15 +10,15 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/utils"
 )
 
-type GroupRepository struct {
+type groupRepository struct {
 	client *ent.Client
 }
 
-func NewGroupRepository(client *ent.Client) *GroupRepository {
-	return &GroupRepository{client: client}
+func NewGroupRepository(client *ent.Client) *groupRepository {
+	return &groupRepository{client: client}
 }
 
-func (r *GroupRepository) Create(ctx context.Context, name string, schoolID int) (*ent.Group, *apperrors.AppError) {
+func (r *groupRepository) Create(ctx context.Context, name string, schoolID int) (*ent.Group, *apperrors.AppError) {
 	group, err := r.client.Group.Create().
 		SetName(name).SetSchoolID(schoolID).Save(ctx)
 
@@ -29,7 +29,7 @@ func (r *GroupRepository) Create(ctx context.Context, name string, schoolID int)
 	return group, nil
 }
 
-func (r *GroupRepository) GetByName(ctx context.Context, name string) (*ent.Group, *apperrors.AppError) {
+func (r *groupRepository) GetByName(ctx context.Context, name string) (*ent.Group, *apperrors.AppError) {
 	group, err := r.client.Group.Query().
 		Where(group.NameEqualFold(name)).
 		WithUsers().
@@ -46,7 +46,7 @@ func (r *GroupRepository) GetByName(ctx context.Context, name string) (*ent.Grou
 	return group, nil
 }
 
-func (r *GroupRepository) GetByID(ctx context.Context, id int) (*ent.Group, *apperrors.AppError) {
+func (r *groupRepository) GetByID(ctx context.Context, id int) (*ent.Group, *apperrors.AppError) {
 	school, err := r.client.Group.Query().
 		Where(group.IDEQ(id)).
 		WithUsers().
@@ -63,7 +63,7 @@ func (r *GroupRepository) GetByID(ctx context.Context, id int) (*ent.Group, *app
 	return school, nil
 }
 
-func (r *GroupRepository) GetByJoinCode(ctx context.Context, joinCode string) (*ent.Group, *apperrors.AppError) {
+func (r *groupRepository) GetByJoinCode(ctx context.Context, joinCode string) (*ent.Group, *apperrors.AppError) {
 	group, err := r.client.Group.Query().
 		Where(
 			group.JoinCodeEqualFold(joinCode),
@@ -78,7 +78,7 @@ func (r *GroupRepository) GetByJoinCode(ctx context.Context, joinCode string) (*
 	return group, nil
 }
 
-func (r *GroupRepository) RefreshJoinCode(ctx context.Context, id int) (*ent.Group, *apperrors.AppError) {
+func (r *groupRepository) RefreshJoinCode(ctx context.Context, id int) (*ent.Group, *apperrors.AppError) {
 	str, err := utils.RandomString()
 	if err != nil {
 		return nil, apperrors.Internal("could not create join code string")

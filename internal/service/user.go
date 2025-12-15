@@ -15,17 +15,17 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/repository"
 )
 
-type UserService struct {
+type userService struct {
 	repository *repository.Repository
 }
 
 func NewUserService(
 	repository *repository.Repository,
-) *UserService {
-	return &UserService{repository: repository}
+) *userService {
+	return &userService{repository: repository}
 }
 
-func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest) (*ent.User, *apperrors.AppError) {
+func (s *userService) Register(ctx context.Context, req dtos.RegistrationRequest) (*ent.User, *apperrors.AppError) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 	return newUser, nil
 }
 
-func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.LoginResponse, *apperrors.AppError) {
+func (s *userService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.LoginResponse, *apperrors.AppError) {
 	//TODO Validate request
 
 	user, err := s.repository.UserRepository.GetUserByEmail(ctx, req.Email)
@@ -110,7 +110,7 @@ func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.L
 	}, nil
 }
 
-func (s *UserService) Logout(ctx context.Context) *apperrors.AppError {
+func (s *userService) Logout(ctx context.Context) *apperrors.AppError {
 	user, ok := auth.UserFromContext(ctx)
 	if !ok {
 		return apperrors.BadRequest("could not find user information")
@@ -119,7 +119,7 @@ func (s *UserService) Logout(ctx context.Context) *apperrors.AppError {
 	return s.repository.RefreshTokenRepository.Revoke(ctx, user.ID)
 }
 
-func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*dtos.RefreshAccessResponse, *apperrors.AppError) {
+func (s *userService) RefreshAccess(ctx context.Context, refreshToken string) (*dtos.RefreshAccessResponse, *apperrors.AppError) {
 	user, ok := auth.UserFromContext(ctx)
 	if !ok {
 		return nil, apperrors.BadRequest("could not find user information")
@@ -144,7 +144,7 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
 	}, nil
 }
 
-func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
+func (s *userService) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
 	user, err := s.repository.UserRepository.GetStudentByID(ctx, id)
 	if err != nil {
 		return user, err
@@ -153,7 +153,7 @@ func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *appe
 	return user, nil
 }
 
-func (s *UserService) JoinGroupOrSchool(ctx context.Context, joinCode string) *apperrors.AppError {
+func (s *userService) JoinGroupOrSchool(ctx context.Context, joinCode string) *apperrors.AppError {
 	userObject, ok := auth.UserFromContext(ctx)
 	if !ok {
 		return apperrors.BadRequest("could not find user information")
@@ -166,7 +166,7 @@ func (s *UserService) JoinGroupOrSchool(ctx context.Context, joinCode string) *a
 	return s.joinGroup(ctx, userObject.ID, joinCode)
 }
 
-func (s *UserService) joinGroup(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
+func (s *userService) joinGroup(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
 	group, err := s.repository.GroupRepository.GetByJoinCode(ctx, joinCode)
 	if err != nil {
 		return err
@@ -180,7 +180,7 @@ func (s *UserService) joinGroup(ctx context.Context, userID int, joinCode string
 	return nil
 }
 
-func (s *UserService) joinSchool(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
+func (s *userService) joinSchool(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
 	school, err := s.repository.SchoolRepository.GetByJoinCode(ctx, joinCode)
 	if err != nil {
 		return err

@@ -8,63 +8,44 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/service"
 )
 
-type UserHandler struct {
+type userHandler struct {
 	service *service.Service
 }
 
-func NewUserHandler(service *service.Service) *UserHandler {
-	return &UserHandler{service:service}
+func NewUserHandler(service *service.Service) *userHandler {
+	return &userHandler{service: service}
 }
 
-func (h *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var body dtos.RegistrationRequest
 
-	if err:= json.NewDecoder(r.Body).Decode(&body);err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 
 		return
 	}
 
-	user, err:= h.service.UserService.Register(r.Context(), body)
-	if err!=nil {
+	user, err := h.service.UserService.Register(r.Context(), body)
+	if err != nil {
 		http.Error(w, err.Message, err.StatusCode)
 
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)	
+	json.NewEncoder(w).Encode(user)
 }
 
-func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var body dtos.LoginRequest
 
-	if err:= json.NewDecoder(r.Body).Decode(&body);err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 
 		return
 	}
 
-	res, err:= h.service.UserService.Login(r.Context(), body)
-	if err!=nil {
-		http.Error(w, err.Message, err.StatusCode)
-
-		return
-	}
-
-	json.NewEncoder(w).Encode(res)
-}
-
-func (h *UserHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
-	var body dtos.RefreshAccessRequest
-
-	if err:= json.NewDecoder(r.Body).Decode(&body);err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-
-		return
-	}
-
-	res, err:= h.service.UserService.RefreshAccess(r.Context(),body.RefreshToken)
+	res, err := h.service.UserService.Login(r.Context(), body)
 	if err != nil {
 		http.Error(w, err.Message, err.StatusCode)
 
@@ -74,7 +55,26 @@ func (h *UserHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
-func (h *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
+	var body dtos.RefreshAccessRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	res, err := h.service.UserService.RefreshAccess(r.Context(), body.RefreshToken)
+	if err != nil {
+		http.Error(w, err.Message, err.StatusCode)
+
+		return
+	}
+
+	json.NewEncoder(w).Encode(res)
+}
+
+func (h *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	err := h.service.UserService.Logout(r.Context())
 	if err != nil {
 		http.Error(w, err.Message, err.StatusCode)
@@ -89,20 +89,20 @@ type Test struct {
 	Hello string `json:"hello"`
 }
 
-func (h *UserHandler) Test(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) Test(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(Test{Hello: "hello"})
 }
 
-func (h *UserHandler) JoinGroupOrSchool(w http.ResponseWriter, r *http.Request) {
+func (h *userHandler) JoinGroupOrSchool(w http.ResponseWriter, r *http.Request) {
 	var body dtos.JoinRequest
 
-	if err:= json.NewDecoder(r.Body).Decode(&body);err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 
 		return
 	}
 
-	err:= h.service.UserService.JoinGroupOrSchool(r.Context(), body.JoinCode)
+	err := h.service.UserService.JoinGroupOrSchool(r.Context(), body.JoinCode)
 
 	if err != nil {
 		http.Error(w, err.Message, err.StatusCode)

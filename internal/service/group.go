@@ -13,17 +13,17 @@ import (
 	"github.com/PhilAldridge/spell-api/internal/utils"
 )
 
-type GroupService struct {
+type groupService struct {
 	repository *repository.Repository
 }
 
-func NewGroupService(repository *repository.Repository) *GroupService {
-	return &GroupService{
+func NewGroupService(repository *repository.Repository) *groupService {
+	return &groupService{
 		repository: repository,
 	}
 }
 
-func (s *GroupService) Create(ctx context.Context, req dtos.GroupCreateRequest) (*ent.Group, *apperrors.AppError) {
+func (s *groupService) Create(ctx context.Context, req dtos.GroupCreateRequest) (*ent.Group, *apperrors.AppError) {
 	userObject, ok:= auth.UserFromContext(ctx)
 	if !ok {
 		return nil, apperrors.BadRequest("could not find user information")

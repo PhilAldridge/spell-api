@@ -8,11 +8,11 @@ import (
 )
 
 type Repository struct {
-	RefreshTokenRepository *RefreshTokenRepository
-	SchoolRepository       *SchoolRepository
-	UserRepository         *UserRepository
-	GroupRepository        *GroupRepository
-	ResultRepository       *ResultRepository
+	RefreshTokenRepository *refreshTokenRepository
+	SchoolRepository       *schoolRepository
+	UserRepository         *userRepository
+	GroupRepository        *groupRepository
+	ResultRepository       *resultRepository
 	client                 *ent.Client
 }
 
