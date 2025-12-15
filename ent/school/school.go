@@ -48,7 +48,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
 	// GroupsColumn is the table column denoting the groups relation/edge.
-	GroupsColumn = "school_groups"
+	GroupsColumn = "school_id"
 	// CustomWordsTable is the table that holds the custom_words relation/edge.
 	CustomWordsTable = "words"
 	// CustomWordsInverseTable is the table name for the Word entity.

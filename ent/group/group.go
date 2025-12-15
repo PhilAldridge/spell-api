@@ -22,6 +22,8 @@ const (
 	FieldJoinCodeValidUntilTimestamp = "join_code_valid_until_timestamp"
 	// FieldLastUpdatedAtTimestamp holds the string denoting the last_updated_at_timestamp field in the database.
 	FieldLastUpdatedAtTimestamp = "last_updated_at_timestamp"
+	// FieldSchoolID holds the string denoting the school_id field in the database.
+	FieldSchoolID = "school_id"
 	// EdgeSchool holds the string denoting the school edge name in mutations.
 	EdgeSchool = "school"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
@@ -38,7 +40,7 @@ const (
 	// It exists in this package in order to avoid circular dependency with the "school" package.
 	SchoolInverseTable = "schools"
 	// SchoolColumn is the table column denoting the school relation/edge.
-	SchoolColumn = "school_groups"
+	SchoolColumn = "school_id"
 	// UsersTable is the table that holds the users relation/edge. The primary key declared below.
 	UsersTable = "group_users"
 	// UsersInverseTable is the table name for the User entity.
@@ -63,12 +65,7 @@ var Columns = []string{
 	FieldJoinCode,
 	FieldJoinCodeValidUntilTimestamp,
 	FieldLastUpdatedAtTimestamp,
-}
-
-// ForeignKeys holds the SQL foreign-keys that are owned by the "groups"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"school_groups",
+	FieldSchoolID,
 }
 
 var (
@@ -87,11 +84,6 @@ var (
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -131,6 +123,11 @@ func ByJoinCodeValidUntilTimestamp(opts ...sql.OrderTermOption) OrderOption {
 // ByLastUpdatedAtTimestamp orders the results by the last_updated_at_timestamp field.
 func ByLastUpdatedAtTimestamp(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldLastUpdatedAtTimestamp, opts...).ToFunc()
+}
+
+// BySchoolID orders the results by the school_id field.
+func BySchoolID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSchoolID, opts...).ToFunc()
 }
 
 // BySchoolField orders the results by school field.

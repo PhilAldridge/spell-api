@@ -74,6 +74,17 @@ func (h *UserHandler) RefreshAccess(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(res)
 }
 
+func (h *UserHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	err := h.service.UserService.Logout(r.Context())
+	if err != nil {
+		http.Error(w, err.Message, err.StatusCode)
+
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 type Test struct {
 	Hello string `json:"hello"`
 }

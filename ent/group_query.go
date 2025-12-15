@@ -31,7 +31,6 @@ type GroupQuery struct {
 	withUsers        *UserQuery
 	withWordLists    *WordListQuery
 	withCompetitions *CompetitionQuery
-	withFKs          bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -479,7 +478,6 @@ func (_q *GroupQuery) prepareQuery(ctx context.Context) error {
 func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group, error) {
 	var (
 		nodes       = []*Group{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [4]bool{
 			_q.withSchool != nil,
@@ -488,12 +486,6 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withCompetitions != nil,
 		}
 	)
-	if _q.withSchool != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, group.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Group).scanValues(nil, columns)
 	}
@@ -546,10 +538,7 @@ func (_q *GroupQuery) loadSchool(ctx context.Context, query *SchoolQuery, nodes 
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*Group)
 	for i := range nodes {
-		if nodes[i].school_groups == nil {
-			continue
-		}
-		fk := *nodes[i].school_groups
+		fk := nodes[i].SchoolID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -566,7 +555,7 @@ func (_q *GroupQuery) loadSchool(ctx context.Context, query *SchoolQuery, nodes 
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "school_groups" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "school_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -782,6 +771,9 @@ func (_q *GroupQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != group.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withSchool != nil {
+			_spec.Node.AddColumnOnce(group.FieldSchoolID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

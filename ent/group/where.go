@@ -75,6 +75,11 @@ func LastUpdatedAtTimestamp(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldLastUpdatedAtTimestamp, v))
 }
 
+// SchoolID applies equality check predicate on the "school_id" field. It's identical to SchoolIDEQ.
+func SchoolID(v int) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldSchoolID, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Group {
 	return predicate.Group(sql.FieldEQ(FieldName, v))
@@ -283,6 +288,26 @@ func LastUpdatedAtTimestampLT(v time.Time) predicate.Group {
 // LastUpdatedAtTimestampLTE applies the LTE predicate on the "last_updated_at_timestamp" field.
 func LastUpdatedAtTimestampLTE(v time.Time) predicate.Group {
 	return predicate.Group(sql.FieldLTE(FieldLastUpdatedAtTimestamp, v))
+}
+
+// SchoolIDEQ applies the EQ predicate on the "school_id" field.
+func SchoolIDEQ(v int) predicate.Group {
+	return predicate.Group(sql.FieldEQ(FieldSchoolID, v))
+}
+
+// SchoolIDNEQ applies the NEQ predicate on the "school_id" field.
+func SchoolIDNEQ(v int) predicate.Group {
+	return predicate.Group(sql.FieldNEQ(FieldSchoolID, v))
+}
+
+// SchoolIDIn applies the In predicate on the "school_id" field.
+func SchoolIDIn(vs ...int) predicate.Group {
+	return predicate.Group(sql.FieldIn(FieldSchoolID, vs...))
+}
+
+// SchoolIDNotIn applies the NotIn predicate on the "school_id" field.
+func SchoolIDNotIn(vs ...int) predicate.Group {
+	return predicate.Group(sql.FieldNotIn(FieldSchoolID, vs...))
 }
 
 // HasSchool applies the HasEdge predicate on the "school" edge.

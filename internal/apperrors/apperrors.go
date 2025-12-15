@@ -44,3 +44,9 @@ func ParseEntError(err error, msg string) *AppError {
 
 	return Internal(errMsg)
 }
+
+func ParseValidationError(err error, msg string) *AppError {
+	errMsg := msg+": "+err.Error()
+
+	return BadRequest(errMsg)
+}

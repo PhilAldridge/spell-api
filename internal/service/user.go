@@ -52,7 +52,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 
 		newUser, err := txRepo.UserRepository.CreateUser(ctx, &userObject, groupIDs, schoolIDs)
 		if err != nil {
-            return nil, err
+			return nil, err
 		}
 
 		if req.NewSchoolName != nil {
@@ -65,9 +65,9 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 		return newUser, nil
 	})
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
 	return newUser, nil
 }
@@ -113,17 +113,13 @@ func (s *UserService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.L
 	}, nil
 }
 
-func (s *UserService) Logout(ctx context.Context, req dtos.LoginRequest) *apperrors.AppError {
+func (s *UserService) Logout(ctx context.Context) *apperrors.AppError {
 	user, ok := auth.UserFromContext(ctx)
 	if !ok {
 		return apperrors.BadRequest("could not find user information")
 	}
-	fmt.Println(user)
 
-	// TODO
-	// Revoke token, returning error if not available
-
-	return nil
+	return s.repository.RefreshTokenRepository.Revoke(ctx, user.ID)
 }
 
 func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*dtos.RefreshAccessResponse, *apperrors.AppError) {
@@ -152,7 +148,7 @@ func (s *UserService) RefreshAccess(ctx context.Context, refreshToken string) (*
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *apperrors.AppError) {
-	user, err := s.repository.UserRepository.GetUserByID(ctx, id)
+	user, err := s.repository.UserRepository.GetStudentByID(ctx, id)
 	if err != nil {
 		return user, err
 	}

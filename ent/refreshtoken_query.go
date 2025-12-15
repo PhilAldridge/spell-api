@@ -24,7 +24,6 @@ type RefreshTokenQuery struct {
 	inters     []Interceptor
 	predicates []predicate.RefreshToken
 	withUser   *UserQuery
-	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -370,18 +369,11 @@ func (_q *RefreshTokenQuery) prepareQuery(ctx context.Context) error {
 func (_q *RefreshTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*RefreshToken, error) {
 	var (
 		nodes       = []*RefreshToken{}
-		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
 			_q.withUser != nil,
 		}
 	)
-	if _q.withUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, refreshtoken.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*RefreshToken).scanValues(nil, columns)
 	}
@@ -413,10 +405,7 @@ func (_q *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, nod
 	ids := make([]int, 0, len(nodes))
 	nodeids := make(map[int][]*RefreshToken)
 	for i := range nodes {
-		if nodes[i].user_refresh_tokens == nil {
-			continue
-		}
-		fk := *nodes[i].user_refresh_tokens
+		fk := nodes[i].UserID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -433,7 +422,7 @@ func (_q *RefreshTokenQuery) loadUser(ctx context.Context, query *UserQuery, nod
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "user_refresh_tokens" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "user_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -466,6 +455,9 @@ func (_q *RefreshTokenQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != refreshtoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withUser != nil {
+			_spec.Node.AddColumnOnce(refreshtoken.FieldUserID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {

@@ -85,16 +85,16 @@ func (_u *RefreshTokenUpdate) SetNillableCreatedAt(v *time.Time) *RefreshTokenUp
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *RefreshTokenUpdate) SetUserID(id int) *RefreshTokenUpdate {
-	_u.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_u *RefreshTokenUpdate) SetUserID(v int) *RefreshTokenUpdate {
+	_u.mutation.SetUserID(v)
 	return _u
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (_u *RefreshTokenUpdate) SetNillableUserID(id *int) *RefreshTokenUpdate {
-	if id != nil {
-		_u = _u.SetUserID(*id)
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *RefreshTokenUpdate) SetNillableUserID(v *int) *RefreshTokenUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
 	return _u
 }
@@ -148,6 +148,9 @@ func (_u *RefreshTokenUpdate) check() error {
 		if err := refreshtoken.TokenHashValidator(v); err != nil {
 			return &ValidationError{Name: "token_hash", err: fmt.Errorf(`ent: validator failed for field "RefreshToken.token_hash": %w`, err)}
 		}
+	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "RefreshToken.user"`)
 	}
 	return nil
 }
@@ -281,16 +284,16 @@ func (_u *RefreshTokenUpdateOne) SetNillableCreatedAt(v *time.Time) *RefreshToke
 	return _u
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_u *RefreshTokenUpdateOne) SetUserID(id int) *RefreshTokenUpdateOne {
-	_u.mutation.SetUserID(id)
+// SetUserID sets the "user_id" field.
+func (_u *RefreshTokenUpdateOne) SetUserID(v int) *RefreshTokenUpdateOne {
+	_u.mutation.SetUserID(v)
 	return _u
 }
 
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (_u *RefreshTokenUpdateOne) SetNillableUserID(id *int) *RefreshTokenUpdateOne {
-	if id != nil {
-		_u = _u.SetUserID(*id)
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *RefreshTokenUpdateOne) SetNillableUserID(v *int) *RefreshTokenUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
 	return _u
 }
@@ -357,6 +360,9 @@ func (_u *RefreshTokenUpdateOne) check() error {
 		if err := refreshtoken.TokenHashValidator(v); err != nil {
 			return &ValidationError{Name: "token_hash", err: fmt.Errorf(`ent: validator failed for field "RefreshToken.token_hash": %w`, err)}
 		}
+	}
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "RefreshToken.user"`)
 	}
 	return nil
 }

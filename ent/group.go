@@ -26,11 +26,12 @@ type Group struct {
 	JoinCodeValidUntilTimestamp time.Time `json:"join_code_valid_until_timestamp,omitempty"`
 	// LastUpdatedAtTimestamp holds the value of the "last_updated_at_timestamp" field.
 	LastUpdatedAtTimestamp time.Time `json:"last_updated_at_timestamp,omitempty"`
+	// SchoolID holds the value of the "school_id" field.
+	SchoolID int `json:"school_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the GroupQuery when eager-loading is set.
-	Edges         GroupEdges `json:"edges"`
-	school_groups *int
-	selectValues  sql.SelectValues
+	Edges        GroupEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // GroupEdges holds the relations/edges for other nodes in the graph.
@@ -91,14 +92,12 @@ func (*Group) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case group.FieldID:
+		case group.FieldID, group.FieldSchoolID:
 			values[i] = new(sql.NullInt64)
 		case group.FieldName, group.FieldJoinCode:
 			values[i] = new(sql.NullString)
 		case group.FieldJoinCodeValidUntilTimestamp, group.FieldLastUpdatedAtTimestamp:
 			values[i] = new(sql.NullTime)
-		case group.ForeignKeys[0]: // school_groups
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -144,12 +143,11 @@ func (_m *Group) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.LastUpdatedAtTimestamp = value.Time
 			}
-		case group.ForeignKeys[0]:
+		case group.FieldSchoolID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field school_groups", value)
+				return fmt.Errorf("unexpected type %T for field school_id", values[i])
 			} else if value.Valid {
-				_m.school_groups = new(int)
-				*_m.school_groups = int(value.Int64)
+				_m.SchoolID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -218,6 +216,9 @@ func (_m *Group) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("last_updated_at_timestamp=")
 	builder.WriteString(_m.LastUpdatedAtTimestamp.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("school_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.SchoolID))
 	builder.WriteByte(')')
 	return builder.String()
 }

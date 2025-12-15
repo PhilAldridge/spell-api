@@ -50,4 +50,17 @@ func (r *RefreshTokenRepository) IsValid(ctx context.Context, tokenHash string, 
 	return nil
 }
 
-// func (r *RefreshTokenRepository) Update(ctx context.Context, )
+func (r *RefreshTokenRepository) Revoke(ctx context.Context, userId int) (*apperrors.AppError) {
+	err:= r.client.RefreshToken.Update().Where(
+		refreshtoken.UserIDEQ(userId),
+		refreshtoken.RevokedEQ(false),
+	).
+	SetRevoked(true).
+	Exec(ctx)
+
+	if err != nil {
+		return apperrors.ParseEntError(err, "logout failed")
+	}
+
+	return nil
+}

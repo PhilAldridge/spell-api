@@ -18,11 +18,12 @@ func (RefreshToken) Fields() []ent.Field {
 		field.Time("expires_at"),
 		field.Bool("revoked").Default(false),
 		field.Time("created_at").Default(time.Now()),
+		field.Int("user_id"),
 	}
 }
 
 func (RefreshToken) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("user", User.Type).Ref("refresh_tokens").Unique(),
+		edge.From("user", User.Type).Ref("refresh_tokens").Unique().Required().Field("user_id"),
 	}
 }

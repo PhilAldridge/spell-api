@@ -1028,27 +1028,51 @@ func (m *GroupMutation) ResetLastUpdatedAtTimestamp() {
 	m.last_updated_at_timestamp = nil
 }
 
-// SetSchoolID sets the "school" edge to the School entity by id.
-func (m *GroupMutation) SetSchoolID(id int) {
-	m.school = &id
+// SetSchoolID sets the "school_id" field.
+func (m *GroupMutation) SetSchoolID(i int) {
+	m.school = &i
+}
+
+// SchoolID returns the value of the "school_id" field in the mutation.
+func (m *GroupMutation) SchoolID() (r int, exists bool) {
+	v := m.school
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSchoolID returns the old "school_id" field's value of the Group entity.
+// If the Group object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GroupMutation) OldSchoolID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSchoolID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSchoolID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSchoolID: %w", err)
+	}
+	return oldValue.SchoolID, nil
+}
+
+// ResetSchoolID resets all changes to the "school_id" field.
+func (m *GroupMutation) ResetSchoolID() {
+	m.school = nil
 }
 
 // ClearSchool clears the "school" edge to the School entity.
 func (m *GroupMutation) ClearSchool() {
 	m.clearedschool = true
+	m.clearedFields[group.FieldSchoolID] = struct{}{}
 }
 
 // SchoolCleared reports if the "school" edge to the School entity was cleared.
 func (m *GroupMutation) SchoolCleared() bool {
 	return m.clearedschool
-}
-
-// SchoolID returns the "school" edge ID in the mutation.
-func (m *GroupMutation) SchoolID() (id int, exists bool) {
-	if m.school != nil {
-		return *m.school, true
-	}
-	return
 }
 
 // SchoolIDs returns the "school" edge IDs in the mutation.
@@ -1263,7 +1287,7 @@ func (m *GroupMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *GroupMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.name != nil {
 		fields = append(fields, group.FieldName)
 	}
@@ -1275,6 +1299,9 @@ func (m *GroupMutation) Fields() []string {
 	}
 	if m.last_updated_at_timestamp != nil {
 		fields = append(fields, group.FieldLastUpdatedAtTimestamp)
+	}
+	if m.school != nil {
+		fields = append(fields, group.FieldSchoolID)
 	}
 	return fields
 }
@@ -1292,6 +1319,8 @@ func (m *GroupMutation) Field(name string) (ent.Value, bool) {
 		return m.JoinCodeValidUntilTimestamp()
 	case group.FieldLastUpdatedAtTimestamp:
 		return m.LastUpdatedAtTimestamp()
+	case group.FieldSchoolID:
+		return m.SchoolID()
 	}
 	return nil, false
 }
@@ -1309,6 +1338,8 @@ func (m *GroupMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldJoinCodeValidUntilTimestamp(ctx)
 	case group.FieldLastUpdatedAtTimestamp:
 		return m.OldLastUpdatedAtTimestamp(ctx)
+	case group.FieldSchoolID:
+		return m.OldSchoolID(ctx)
 	}
 	return nil, fmt.Errorf("unknown Group field %s", name)
 }
@@ -1346,6 +1377,13 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetLastUpdatedAtTimestamp(v)
 		return nil
+	case group.FieldSchoolID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSchoolID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
 }
@@ -1353,13 +1391,16 @@ func (m *GroupMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *GroupMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *GroupMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -1406,6 +1447,9 @@ func (m *GroupMutation) ResetField(name string) error {
 		return nil
 	case group.FieldLastUpdatedAtTimestamp:
 		m.ResetLastUpdatedAtTimestamp()
+		return nil
+	case group.FieldSchoolID:
+		m.ResetSchoolID()
 		return nil
 	}
 	return fmt.Errorf("unknown Group field %s", name)
@@ -1825,27 +1869,51 @@ func (m *RefreshTokenMutation) ResetCreatedAt() {
 	m.created_at = nil
 }
 
-// SetUserID sets the "user" edge to the User entity by id.
-func (m *RefreshTokenMutation) SetUserID(id int) {
-	m.user = &id
+// SetUserID sets the "user_id" field.
+func (m *RefreshTokenMutation) SetUserID(i int) {
+	m.user = &i
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *RefreshTokenMutation) UserID() (r int, exists bool) {
+	v := m.user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the RefreshToken entity.
+// If the RefreshToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RefreshTokenMutation) OldUserID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *RefreshTokenMutation) ResetUserID() {
+	m.user = nil
 }
 
 // ClearUser clears the "user" edge to the User entity.
 func (m *RefreshTokenMutation) ClearUser() {
 	m.cleareduser = true
+	m.clearedFields[refreshtoken.FieldUserID] = struct{}{}
 }
 
 // UserCleared reports if the "user" edge to the User entity was cleared.
 func (m *RefreshTokenMutation) UserCleared() bool {
 	return m.cleareduser
-}
-
-// UserID returns the "user" edge ID in the mutation.
-func (m *RefreshTokenMutation) UserID() (id int, exists bool) {
-	if m.user != nil {
-		return *m.user, true
-	}
-	return
 }
 
 // UserIDs returns the "user" edge IDs in the mutation.
@@ -1898,7 +1966,7 @@ func (m *RefreshTokenMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RefreshTokenMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 5)
 	if m.token_hash != nil {
 		fields = append(fields, refreshtoken.FieldTokenHash)
 	}
@@ -1910,6 +1978,9 @@ func (m *RefreshTokenMutation) Fields() []string {
 	}
 	if m.created_at != nil {
 		fields = append(fields, refreshtoken.FieldCreatedAt)
+	}
+	if m.user != nil {
+		fields = append(fields, refreshtoken.FieldUserID)
 	}
 	return fields
 }
@@ -1927,6 +1998,8 @@ func (m *RefreshTokenMutation) Field(name string) (ent.Value, bool) {
 		return m.Revoked()
 	case refreshtoken.FieldCreatedAt:
 		return m.CreatedAt()
+	case refreshtoken.FieldUserID:
+		return m.UserID()
 	}
 	return nil, false
 }
@@ -1944,6 +2017,8 @@ func (m *RefreshTokenMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldRevoked(ctx)
 	case refreshtoken.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
+	case refreshtoken.FieldUserID:
+		return m.OldUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -1981,6 +2056,13 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCreatedAt(v)
 		return nil
+	case refreshtoken.FieldUserID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)
 }
@@ -1988,13 +2070,16 @@ func (m *RefreshTokenMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *RefreshTokenMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *RefreshTokenMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	}
 	return nil, false
 }
 
@@ -2041,6 +2126,9 @@ func (m *RefreshTokenMutation) ResetField(name string) error {
 		return nil
 	case refreshtoken.FieldCreatedAt:
 		m.ResetCreatedAt()
+		return nil
+	case refreshtoken.FieldUserID:
+		m.ResetUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown RefreshToken field %s", name)

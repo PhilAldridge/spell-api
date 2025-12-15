@@ -88,16 +88,16 @@ func (_u *GroupUpdate) SetNillableLastUpdatedAtTimestamp(v *time.Time) *GroupUpd
 	return _u
 }
 
-// SetSchoolID sets the "school" edge to the School entity by ID.
-func (_u *GroupUpdate) SetSchoolID(id int) *GroupUpdate {
-	_u.mutation.SetSchoolID(id)
+// SetSchoolID sets the "school_id" field.
+func (_u *GroupUpdate) SetSchoolID(v int) *GroupUpdate {
+	_u.mutation.SetSchoolID(v)
 	return _u
 }
 
-// SetNillableSchoolID sets the "school" edge to the School entity by ID if the given value is not nil.
-func (_u *GroupUpdate) SetNillableSchoolID(id *int) *GroupUpdate {
-	if id != nil {
-		_u = _u.SetSchoolID(*id)
+// SetNillableSchoolID sets the "school_id" field if the given value is not nil.
+func (_u *GroupUpdate) SetNillableSchoolID(v *int) *GroupUpdate {
+	if v != nil {
+		_u.SetSchoolID(*v)
 	}
 	return _u
 }
@@ -253,7 +253,18 @@ func (_u *GroupUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *GroupUpdate) check() error {
+	if _u.mutation.SchoolCleared() && len(_u.mutation.SchoolIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Group.school"`)
+	}
+	return nil
+}
+
 func (_u *GroupUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -514,16 +525,16 @@ func (_u *GroupUpdateOne) SetNillableLastUpdatedAtTimestamp(v *time.Time) *Group
 	return _u
 }
 
-// SetSchoolID sets the "school" edge to the School entity by ID.
-func (_u *GroupUpdateOne) SetSchoolID(id int) *GroupUpdateOne {
-	_u.mutation.SetSchoolID(id)
+// SetSchoolID sets the "school_id" field.
+func (_u *GroupUpdateOne) SetSchoolID(v int) *GroupUpdateOne {
+	_u.mutation.SetSchoolID(v)
 	return _u
 }
 
-// SetNillableSchoolID sets the "school" edge to the School entity by ID if the given value is not nil.
-func (_u *GroupUpdateOne) SetNillableSchoolID(id *int) *GroupUpdateOne {
-	if id != nil {
-		_u = _u.SetSchoolID(*id)
+// SetNillableSchoolID sets the "school_id" field if the given value is not nil.
+func (_u *GroupUpdateOne) SetNillableSchoolID(v *int) *GroupUpdateOne {
+	if v != nil {
+		_u.SetSchoolID(*v)
 	}
 	return _u
 }
@@ -692,7 +703,18 @@ func (_u *GroupUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *GroupUpdateOne) check() error {
+	if _u.mutation.SchoolCleared() && len(_u.mutation.SchoolIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "Group.school"`)
+	}
+	return nil
+}
+
 func (_u *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(group.Table, group.Columns, sqlgraph.NewFieldSpec(group.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {

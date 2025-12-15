@@ -26,11 +26,12 @@ type RefreshToken struct {
 	Revoked bool `json:"revoked,omitempty"`
 	// CreatedAt holds the value of the "created_at" field.
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID int `json:"user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the RefreshTokenQuery when eager-loading is set.
-	Edges               RefreshTokenEdges `json:"edges"`
-	user_refresh_tokens *int
-	selectValues        sql.SelectValues
+	Edges        RefreshTokenEdges `json:"edges"`
+	selectValues sql.SelectValues
 }
 
 // RefreshTokenEdges holds the relations/edges for other nodes in the graph.
@@ -60,14 +61,12 @@ func (*RefreshToken) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case refreshtoken.FieldRevoked:
 			values[i] = new(sql.NullBool)
-		case refreshtoken.FieldID:
+		case refreshtoken.FieldID, refreshtoken.FieldUserID:
 			values[i] = new(sql.NullInt64)
 		case refreshtoken.FieldTokenHash:
 			values[i] = new(sql.NullString)
 		case refreshtoken.FieldExpiresAt, refreshtoken.FieldCreatedAt:
 			values[i] = new(sql.NullTime)
-		case refreshtoken.ForeignKeys[0]: // user_refresh_tokens
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -113,12 +112,11 @@ func (_m *RefreshToken) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case refreshtoken.ForeignKeys[0]:
+		case refreshtoken.FieldUserID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field user_refresh_tokens", value)
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value.Valid {
-				_m.user_refresh_tokens = new(int)
-				*_m.user_refresh_tokens = int(value.Int64)
+				_m.UserID = int(value.Int64)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -172,6 +170,9 @@ func (_m *RefreshToken) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("user_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteByte(')')
 	return builder.String()
 }

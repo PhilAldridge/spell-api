@@ -61,17 +61,9 @@ func (_c *RefreshTokenCreate) SetNillableCreatedAt(v *time.Time) *RefreshTokenCr
 	return _c
 }
 
-// SetUserID sets the "user" edge to the User entity by ID.
-func (_c *RefreshTokenCreate) SetUserID(id int) *RefreshTokenCreate {
-	_c.mutation.SetUserID(id)
-	return _c
-}
-
-// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
-func (_c *RefreshTokenCreate) SetNillableUserID(id *int) *RefreshTokenCreate {
-	if id != nil {
-		_c = _c.SetUserID(*id)
-	}
+// SetUserID sets the "user_id" field.
+func (_c *RefreshTokenCreate) SetUserID(v int) *RefreshTokenCreate {
+	_c.mutation.SetUserID(v)
 	return _c
 }
 
@@ -144,6 +136,12 @@ func (_c *RefreshTokenCreate) check() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "RefreshToken.created_at"`)}
 	}
+	if _, ok := _c.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "RefreshToken.user_id"`)}
+	}
+	if len(_c.mutation.UserIDs()) == 0 {
+		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "RefreshToken.user"`)}
+	}
 	return nil
 }
 
@@ -200,7 +198,7 @@ func (_c *RefreshTokenCreate) createSpec() (*RefreshToken, *sqlgraph.CreateSpec)
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.user_refresh_tokens = &nodes[0]
+		_node.UserID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -64,17 +64,9 @@ func (_c *GroupCreate) SetNillableLastUpdatedAtTimestamp(v *time.Time) *GroupCre
 	return _c
 }
 
-// SetSchoolID sets the "school" edge to the School entity by ID.
-func (_c *GroupCreate) SetSchoolID(id int) *GroupCreate {
-	_c.mutation.SetSchoolID(id)
-	return _c
-}
-
-// SetNillableSchoolID sets the "school" edge to the School entity by ID if the given value is not nil.
-func (_c *GroupCreate) SetNillableSchoolID(id *int) *GroupCreate {
-	if id != nil {
-		_c = _c.SetSchoolID(*id)
-	}
+// SetSchoolID sets the "school_id" field.
+func (_c *GroupCreate) SetSchoolID(v int) *GroupCreate {
+	_c.mutation.SetSchoolID(v)
 	return _c
 }
 
@@ -187,6 +179,12 @@ func (_c *GroupCreate) check() error {
 	if _, ok := _c.mutation.LastUpdatedAtTimestamp(); !ok {
 		return &ValidationError{Name: "last_updated_at_timestamp", err: errors.New(`ent: missing required field "Group.last_updated_at_timestamp"`)}
 	}
+	if _, ok := _c.mutation.SchoolID(); !ok {
+		return &ValidationError{Name: "school_id", err: errors.New(`ent: missing required field "Group.school_id"`)}
+	}
+	if len(_c.mutation.SchoolIDs()) == 0 {
+		return &ValidationError{Name: "school", err: errors.New(`ent: missing required edge "Group.school"`)}
+	}
 	return nil
 }
 
@@ -243,7 +241,7 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.school_groups = &nodes[0]
+		_node.SchoolID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.UsersIDs(); len(nodes) > 0 {

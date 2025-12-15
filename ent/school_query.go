@@ -688,7 +688,9 @@ func (_q *SchoolQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes 
 			init(nodes[i])
 		}
 	}
-	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(group.FieldSchoolID)
+	}
 	query.Where(predicate.Group(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(school.GroupsColumn), fks...))
 	}))
@@ -697,13 +699,10 @@ func (_q *SchoolQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes 
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.school_groups
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "school_groups" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
+		fk := n.SchoolID
+		node, ok := nodeids[fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "school_groups" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "school_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

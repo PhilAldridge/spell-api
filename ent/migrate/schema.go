@@ -30,7 +30,7 @@ var (
 		{Name: "join_code", Type: field.TypeString, Unique: true},
 		{Name: "join_code_valid_until_timestamp", Type: field.TypeTime},
 		{Name: "last_updated_at_timestamp", Type: field.TypeTime},
-		{Name: "school_groups", Type: field.TypeInt, Nullable: true},
+		{Name: "school_id", Type: field.TypeInt},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
@@ -42,7 +42,7 @@ var (
 				Symbol:     "groups_schools_groups",
 				Columns:    []*schema.Column{GroupsColumns[5]},
 				RefColumns: []*schema.Column{SchoolsColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
@@ -53,7 +53,7 @@ var (
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "revoked", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
-		{Name: "user_refresh_tokens", Type: field.TypeInt, Nullable: true},
+		{Name: "user_id", Type: field.TypeInt},
 	}
 	// RefreshTokensTable holds the schema information for the "refresh_tokens" table.
 	RefreshTokensTable = &schema.Table{
@@ -65,7 +65,7 @@ var (
 				Symbol:     "refresh_tokens_users_refresh_tokens",
 				Columns:    []*schema.Column{RefreshTokensColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
