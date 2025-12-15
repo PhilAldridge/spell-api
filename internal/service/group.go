@@ -4,7 +4,6 @@ import (
 	"context"
 	"slices"
 
-	"github.com/PhilAldridge/spell-api/ent"
 	"github.com/PhilAldridge/spell-api/ent/user"
 	"github.com/PhilAldridge/spell-api/internal/apperrors"
 	"github.com/PhilAldridge/spell-api/internal/auth"
@@ -23,7 +22,8 @@ func NewGroupService(repository *repository.Repository) *groupService {
 	}
 }
 
-func (s *groupService) Create(ctx context.Context, req dtos.GroupCreateRequest) (*ent.Group, *apperrors.AppError) {
+func (s *groupService) Create(ctx context.Context, req dtos.GroupCreateRequest) (*dtos.GroupResponse, *apperrors.AppError) {
+	
 	userObject, ok:= auth.UserFromContext(ctx)
 	if !ok {
 		return nil, apperrors.BadRequest("could not find user information")
@@ -47,5 +47,8 @@ func (s *groupService) Create(ctx context.Context, req dtos.GroupCreateRequest) 
 		return nil, err
 	}
 
-	return group, err
+	return &dtos.GroupResponse{
+		ID: group.ID,
+		Name: group.Name,
+	}, err
 }

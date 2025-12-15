@@ -45,6 +45,8 @@ func (r *schoolRepository) GetByName(ctx context.Context, name string) (*ent.Sch
 }
 
 func (r *schoolRepository) GetByID(ctx context.Context, id int) (*ent.School, *apperrors.AppError) {
+	
+
 	school, err := r.client.School.Query().
 		Where(school.IDEQ(id)).
 		WithGroups(func(gq *ent.GroupQuery) {
