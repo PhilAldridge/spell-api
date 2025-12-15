@@ -30,6 +30,26 @@ func (_c *SchoolCreate) SetName(v string) *SchoolCreate {
 	return _c
 }
 
+// SetJoinCode sets the "join_code" field.
+func (_c *SchoolCreate) SetJoinCode(v string) *SchoolCreate {
+	_c.mutation.SetJoinCode(v)
+	return _c
+}
+
+// SetJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field.
+func (_c *SchoolCreate) SetJoinCodeValidUntilTimestamp(v time.Time) *SchoolCreate {
+	_c.mutation.SetJoinCodeValidUntilTimestamp(v)
+	return _c
+}
+
+// SetNillableJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field if the given value is not nil.
+func (_c *SchoolCreate) SetNillableJoinCodeValidUntilTimestamp(v *time.Time) *SchoolCreate {
+	if v != nil {
+		_c.SetJoinCodeValidUntilTimestamp(*v)
+	}
+	return _c
+}
+
 // SetLastUpdatedAt sets the "last_updated_at" field.
 func (_c *SchoolCreate) SetLastUpdatedAt(v time.Time) *SchoolCreate {
 	_c.mutation.SetLastUpdatedAt(v)
@@ -158,6 +178,10 @@ func (_c *SchoolCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (_c *SchoolCreate) defaults() {
+	if _, ok := _c.mutation.JoinCodeValidUntilTimestamp(); !ok {
+		v := school.DefaultJoinCodeValidUntilTimestamp
+		_c.mutation.SetJoinCodeValidUntilTimestamp(v)
+	}
 	if _, ok := _c.mutation.LastUpdatedAt(); !ok {
 		v := school.DefaultLastUpdatedAt
 		_c.mutation.SetLastUpdatedAt(v)
@@ -168,6 +192,17 @@ func (_c *SchoolCreate) defaults() {
 func (_c *SchoolCreate) check() error {
 	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "School.name"`)}
+	}
+	if _, ok := _c.mutation.JoinCode(); !ok {
+		return &ValidationError{Name: "join_code", err: errors.New(`ent: missing required field "School.join_code"`)}
+	}
+	if v, ok := _c.mutation.JoinCode(); ok {
+		if err := school.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "School.join_code": %w`, err)}
+		}
+	}
+	if _, ok := _c.mutation.JoinCodeValidUntilTimestamp(); !ok {
+		return &ValidationError{Name: "join_code_valid_until_timestamp", err: errors.New(`ent: missing required field "School.join_code_valid_until_timestamp"`)}
 	}
 	if _, ok := _c.mutation.LastUpdatedAt(); !ok {
 		return &ValidationError{Name: "last_updated_at", err: errors.New(`ent: missing required field "School.last_updated_at"`)}
@@ -201,6 +236,14 @@ func (_c *SchoolCreate) createSpec() (*School, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(school.FieldName, field.TypeString, value)
 		_node.Name = value
+	}
+	if value, ok := _c.mutation.JoinCode(); ok {
+		_spec.SetField(school.FieldJoinCode, field.TypeString, value)
+		_node.JoinCode = value
+	}
+	if value, ok := _c.mutation.JoinCodeValidUntilTimestamp(); ok {
+		_spec.SetField(school.FieldJoinCodeValidUntilTimestamp, field.TypeTime, value)
+		_node.JoinCodeValidUntilTimestamp = value
 	}
 	if value, ok := _c.mutation.LastUpdatedAt(); ok {
 		_spec.SetField(school.FieldLastUpdatedAt, field.TypeTime, value)

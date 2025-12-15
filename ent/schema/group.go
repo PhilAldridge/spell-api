@@ -15,7 +15,7 @@ type Group struct {
 func (Group) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique(),
-		field.String("join_code").Unique(),
+		field.String("join_code").Unique().MaxLen(6).MinLen(6),
 		field.Time("join_code_valid_until_timestamp").Default(time.Now().Add(time.Hour*24*7)),
 		field.Time("last_updated_at_timestamp").Default(time.Now()),
 		field.Int("school_id"),

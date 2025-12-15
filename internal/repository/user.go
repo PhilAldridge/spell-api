@@ -52,7 +52,8 @@ func (r *UserRepository) GetStudentByID(ctx context.Context, id int) (*ent.User,
 			gq.WithSchool()
 		}).
 		WithResults(func(rq *ent.ResultQuery) {
-			result.TestedAtTimestampGT(time.Now().AddDate(0, -2, 0))
+			rq.GroupBy(result.WordColumn)
+			result.TestedAtTimestampGT(time.Now().UTC().AddDate(0, -2, 0))
 		}).
 		First(ctx)
 	if err != nil {

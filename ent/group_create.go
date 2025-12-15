@@ -173,6 +173,11 @@ func (_c *GroupCreate) check() error {
 	if _, ok := _c.mutation.JoinCode(); !ok {
 		return &ValidationError{Name: "join_code", err: errors.New(`ent: missing required field "Group.join_code"`)}
 	}
+	if v, ok := _c.mutation.JoinCode(); ok {
+		if err := group.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "Group.join_code": %w`, err)}
+		}
+	}
 	if _, ok := _c.mutation.JoinCodeValidUntilTimestamp(); !ok {
 		return &ValidationError{Name: "join_code_valid_until_timestamp", err: errors.New(`ent: missing required field "Group.join_code_valid_until_timestamp"`)}
 	}

@@ -44,6 +44,24 @@ func init() {
 	competition.DefaultLastUpdatedAtTimestamp = competitionDescLastUpdatedAtTimestamp.Default.(time.Time)
 	groupFields := schema.Group{}.Fields()
 	_ = groupFields
+	// groupDescJoinCode is the schema descriptor for join_code field.
+	groupDescJoinCode := groupFields[1].Descriptor()
+	// group.JoinCodeValidator is a validator for the "join_code" field. It is called by the builders before save.
+	group.JoinCodeValidator = func() func(string) error {
+		validators := groupDescJoinCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(join_code string) error {
+			for _, fn := range fns {
+				if err := fn(join_code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
 	// groupDescJoinCodeValidUntilTimestamp is the schema descriptor for join_code_valid_until_timestamp field.
 	groupDescJoinCodeValidUntilTimestamp := groupFields[2].Descriptor()
 	// group.DefaultJoinCodeValidUntilTimestamp holds the default value on creation for the join_code_valid_until_timestamp field.
@@ -86,8 +104,30 @@ func init() {
 	result.DefaultTestedAtTimestamp = resultDescTestedAtTimestamp.Default.(time.Time)
 	schoolFields := schema.School{}.Fields()
 	_ = schoolFields
+	// schoolDescJoinCode is the schema descriptor for join_code field.
+	schoolDescJoinCode := schoolFields[1].Descriptor()
+	// school.JoinCodeValidator is a validator for the "join_code" field. It is called by the builders before save.
+	school.JoinCodeValidator = func() func(string) error {
+		validators := schoolDescJoinCode.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(join_code string) error {
+			for _, fn := range fns {
+				if err := fn(join_code); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// schoolDescJoinCodeValidUntilTimestamp is the schema descriptor for join_code_valid_until_timestamp field.
+	schoolDescJoinCodeValidUntilTimestamp := schoolFields[2].Descriptor()
+	// school.DefaultJoinCodeValidUntilTimestamp holds the default value on creation for the join_code_valid_until_timestamp field.
+	school.DefaultJoinCodeValidUntilTimestamp = schoolDescJoinCodeValidUntilTimestamp.Default.(time.Time)
 	// schoolDescLastUpdatedAt is the schema descriptor for last_updated_at field.
-	schoolDescLastUpdatedAt := schoolFields[1].Descriptor()
+	schoolDescLastUpdatedAt := schoolFields[3].Descriptor()
 	// school.DefaultLastUpdatedAt holds the default value on creation for the last_updated_at field.
 	school.DefaultLastUpdatedAt = schoolDescLastUpdatedAt.Default.(time.Time)
 	userFields := schema.User{}.Fields()

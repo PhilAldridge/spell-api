@@ -16,6 +16,10 @@ const (
 	FieldID = "id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
+	// FieldJoinCode holds the string denoting the join_code field in the database.
+	FieldJoinCode = "join_code"
+	// FieldJoinCodeValidUntilTimestamp holds the string denoting the join_code_valid_until_timestamp field in the database.
+	FieldJoinCodeValidUntilTimestamp = "join_code_valid_until_timestamp"
 	// FieldLastUpdatedAt holds the string denoting the last_updated_at field in the database.
 	FieldLastUpdatedAt = "last_updated_at"
 	// EdgeAdmins holds the string denoting the admins edge name in mutations.
@@ -69,6 +73,8 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldName,
+	FieldJoinCode,
+	FieldJoinCodeValidUntilTimestamp,
 	FieldLastUpdatedAt,
 }
 
@@ -100,6 +106,10 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// JoinCodeValidator is a validator for the "join_code" field. It is called by the builders before save.
+	JoinCodeValidator func(string) error
+	// DefaultJoinCodeValidUntilTimestamp holds the default value on creation for the "join_code_valid_until_timestamp" field.
+	DefaultJoinCodeValidUntilTimestamp time.Time
 	// DefaultLastUpdatedAt holds the default value on creation for the "last_updated_at" field.
 	DefaultLastUpdatedAt time.Time
 )
@@ -115,6 +125,16 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 // ByName orders the results by the name field.
 func ByName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldName, opts...).ToFunc()
+}
+
+// ByJoinCode orders the results by the join_code field.
+func ByJoinCode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldJoinCode, opts...).ToFunc()
+}
+
+// ByJoinCodeValidUntilTimestamp orders the results by the join_code_valid_until_timestamp field.
+func ByJoinCodeValidUntilTimestamp(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldJoinCodeValidUntilTimestamp, opts...).ToFunc()
 }
 
 // ByLastUpdatedAt orders the results by the last_updated_at field.

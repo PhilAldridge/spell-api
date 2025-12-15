@@ -20,6 +20,10 @@ type School struct {
 	ID int `json:"id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
+	// JoinCode holds the value of the "join_code" field.
+	JoinCode string `json:"join_code,omitempty"`
+	// JoinCodeValidUntilTimestamp holds the value of the "join_code_valid_until_timestamp" field.
+	JoinCodeValidUntilTimestamp time.Time `json:"join_code_valid_until_timestamp,omitempty"`
 	// LastUpdatedAt holds the value of the "last_updated_at" field.
 	LastUpdatedAt time.Time `json:"last_updated_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -100,9 +104,9 @@ func (*School) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case school.FieldID:
 			values[i] = new(sql.NullInt64)
-		case school.FieldName:
+		case school.FieldName, school.FieldJoinCode:
 			values[i] = new(sql.NullString)
-		case school.FieldLastUpdatedAt:
+		case school.FieldJoinCodeValidUntilTimestamp, school.FieldLastUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case school.ForeignKeys[0]: // user_owned_school
 			values[i] = new(sql.NullInt64)
@@ -132,6 +136,18 @@ func (_m *School) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
+			}
+		case school.FieldJoinCode:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field join_code", values[i])
+			} else if value.Valid {
+				_m.JoinCode = value.String
+			}
+		case school.FieldJoinCodeValidUntilTimestamp:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field join_code_valid_until_timestamp", values[i])
+			} else if value.Valid {
+				_m.JoinCodeValidUntilTimestamp = value.Time
 			}
 		case school.FieldLastUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -209,6 +225,12 @@ func (_m *School) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("name=")
 	builder.WriteString(_m.Name)
+	builder.WriteString(", ")
+	builder.WriteString("join_code=")
+	builder.WriteString(_m.JoinCode)
+	builder.WriteString(", ")
+	builder.WriteString("join_code_valid_until_timestamp=")
+	builder.WriteString(_m.JoinCodeValidUntilTimestamp.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("last_updated_at=")
 	builder.WriteString(_m.LastUpdatedAt.Format(time.ANSIC))

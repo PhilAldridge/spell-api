@@ -2861,29 +2861,31 @@ func (m *ResultMutation) ResetEdge(name string) error {
 // SchoolMutation represents an operation that mutates the School nodes in the graph.
 type SchoolMutation struct {
 	config
-	op                       Op
-	typ                      string
-	id                       *int
-	name                     *string
-	last_updated_at          *time.Time
-	clearedFields            map[string]struct{}
-	admins                   map[int]struct{}
-	removedadmins            map[int]struct{}
-	clearedadmins            bool
-	owner                    *int
-	clearedowner             bool
-	groups                   map[int]struct{}
-	removedgroups            map[int]struct{}
-	clearedgroups            bool
-	custom_words             map[int]struct{}
-	removedcustom_words      map[int]struct{}
-	clearedcustom_words      bool
-	custom_word_lists        map[int]struct{}
-	removedcustom_word_lists map[int]struct{}
-	clearedcustom_word_lists bool
-	done                     bool
-	oldValue                 func(context.Context) (*School, error)
-	predicates               []predicate.School
+	op                              Op
+	typ                             string
+	id                              *int
+	name                            *string
+	join_code                       *string
+	join_code_valid_until_timestamp *time.Time
+	last_updated_at                 *time.Time
+	clearedFields                   map[string]struct{}
+	admins                          map[int]struct{}
+	removedadmins                   map[int]struct{}
+	clearedadmins                   bool
+	owner                           *int
+	clearedowner                    bool
+	groups                          map[int]struct{}
+	removedgroups                   map[int]struct{}
+	clearedgroups                   bool
+	custom_words                    map[int]struct{}
+	removedcustom_words             map[int]struct{}
+	clearedcustom_words             bool
+	custom_word_lists               map[int]struct{}
+	removedcustom_word_lists        map[int]struct{}
+	clearedcustom_word_lists        bool
+	done                            bool
+	oldValue                        func(context.Context) (*School, error)
+	predicates                      []predicate.School
 }
 
 var _ ent.Mutation = (*SchoolMutation)(nil)
@@ -3018,6 +3020,78 @@ func (m *SchoolMutation) OldName(ctx context.Context) (v string, err error) {
 // ResetName resets all changes to the "name" field.
 func (m *SchoolMutation) ResetName() {
 	m.name = nil
+}
+
+// SetJoinCode sets the "join_code" field.
+func (m *SchoolMutation) SetJoinCode(s string) {
+	m.join_code = &s
+}
+
+// JoinCode returns the value of the "join_code" field in the mutation.
+func (m *SchoolMutation) JoinCode() (r string, exists bool) {
+	v := m.join_code
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldJoinCode returns the old "join_code" field's value of the School entity.
+// If the School object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SchoolMutation) OldJoinCode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldJoinCode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldJoinCode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldJoinCode: %w", err)
+	}
+	return oldValue.JoinCode, nil
+}
+
+// ResetJoinCode resets all changes to the "join_code" field.
+func (m *SchoolMutation) ResetJoinCode() {
+	m.join_code = nil
+}
+
+// SetJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field.
+func (m *SchoolMutation) SetJoinCodeValidUntilTimestamp(t time.Time) {
+	m.join_code_valid_until_timestamp = &t
+}
+
+// JoinCodeValidUntilTimestamp returns the value of the "join_code_valid_until_timestamp" field in the mutation.
+func (m *SchoolMutation) JoinCodeValidUntilTimestamp() (r time.Time, exists bool) {
+	v := m.join_code_valid_until_timestamp
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldJoinCodeValidUntilTimestamp returns the old "join_code_valid_until_timestamp" field's value of the School entity.
+// If the School object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SchoolMutation) OldJoinCodeValidUntilTimestamp(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldJoinCodeValidUntilTimestamp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldJoinCodeValidUntilTimestamp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldJoinCodeValidUntilTimestamp: %w", err)
+	}
+	return oldValue.JoinCodeValidUntilTimestamp, nil
+}
+
+// ResetJoinCodeValidUntilTimestamp resets all changes to the "join_code_valid_until_timestamp" field.
+func (m *SchoolMutation) ResetJoinCodeValidUntilTimestamp() {
+	m.join_code_valid_until_timestamp = nil
 }
 
 // SetLastUpdatedAt sets the "last_updated_at" field.
@@ -3345,9 +3419,15 @@ func (m *SchoolMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SchoolMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
 	if m.name != nil {
 		fields = append(fields, school.FieldName)
+	}
+	if m.join_code != nil {
+		fields = append(fields, school.FieldJoinCode)
+	}
+	if m.join_code_valid_until_timestamp != nil {
+		fields = append(fields, school.FieldJoinCodeValidUntilTimestamp)
 	}
 	if m.last_updated_at != nil {
 		fields = append(fields, school.FieldLastUpdatedAt)
@@ -3362,6 +3442,10 @@ func (m *SchoolMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case school.FieldName:
 		return m.Name()
+	case school.FieldJoinCode:
+		return m.JoinCode()
+	case school.FieldJoinCodeValidUntilTimestamp:
+		return m.JoinCodeValidUntilTimestamp()
 	case school.FieldLastUpdatedAt:
 		return m.LastUpdatedAt()
 	}
@@ -3375,6 +3459,10 @@ func (m *SchoolMutation) OldField(ctx context.Context, name string) (ent.Value, 
 	switch name {
 	case school.FieldName:
 		return m.OldName(ctx)
+	case school.FieldJoinCode:
+		return m.OldJoinCode(ctx)
+	case school.FieldJoinCodeValidUntilTimestamp:
+		return m.OldJoinCodeValidUntilTimestamp(ctx)
 	case school.FieldLastUpdatedAt:
 		return m.OldLastUpdatedAt(ctx)
 	}
@@ -3392,6 +3480,20 @@ func (m *SchoolMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
+		return nil
+	case school.FieldJoinCode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJoinCode(v)
+		return nil
+	case school.FieldJoinCodeValidUntilTimestamp:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetJoinCodeValidUntilTimestamp(v)
 		return nil
 	case school.FieldLastUpdatedAt:
 		v, ok := value.(time.Time)
@@ -3451,6 +3553,12 @@ func (m *SchoolMutation) ResetField(name string) error {
 	switch name {
 	case school.FieldName:
 		m.ResetName()
+		return nil
+	case school.FieldJoinCode:
+		m.ResetJoinCode()
+		return nil
+	case school.FieldJoinCodeValidUntilTimestamp:
+		m.ResetJoinCodeValidUntilTimestamp()
 		return nil
 	case school.FieldLastUpdatedAt:
 		m.ResetLastUpdatedAt()

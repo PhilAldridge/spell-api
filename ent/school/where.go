@@ -60,6 +60,16 @@ func Name(v string) predicate.School {
 	return predicate.School(sql.FieldEQ(FieldName, v))
 }
 
+// JoinCode applies equality check predicate on the "join_code" field. It's identical to JoinCodeEQ.
+func JoinCode(v string) predicate.School {
+	return predicate.School(sql.FieldEQ(FieldJoinCode, v))
+}
+
+// JoinCodeValidUntilTimestamp applies equality check predicate on the "join_code_valid_until_timestamp" field. It's identical to JoinCodeValidUntilTimestampEQ.
+func JoinCodeValidUntilTimestamp(v time.Time) predicate.School {
+	return predicate.School(sql.FieldEQ(FieldJoinCodeValidUntilTimestamp, v))
+}
+
 // LastUpdatedAt applies equality check predicate on the "last_updated_at" field. It's identical to LastUpdatedAtEQ.
 func LastUpdatedAt(v time.Time) predicate.School {
 	return predicate.School(sql.FieldEQ(FieldLastUpdatedAt, v))
@@ -128,6 +138,111 @@ func NameEqualFold(v string) predicate.School {
 // NameContainsFold applies the ContainsFold predicate on the "name" field.
 func NameContainsFold(v string) predicate.School {
 	return predicate.School(sql.FieldContainsFold(FieldName, v))
+}
+
+// JoinCodeEQ applies the EQ predicate on the "join_code" field.
+func JoinCodeEQ(v string) predicate.School {
+	return predicate.School(sql.FieldEQ(FieldJoinCode, v))
+}
+
+// JoinCodeNEQ applies the NEQ predicate on the "join_code" field.
+func JoinCodeNEQ(v string) predicate.School {
+	return predicate.School(sql.FieldNEQ(FieldJoinCode, v))
+}
+
+// JoinCodeIn applies the In predicate on the "join_code" field.
+func JoinCodeIn(vs ...string) predicate.School {
+	return predicate.School(sql.FieldIn(FieldJoinCode, vs...))
+}
+
+// JoinCodeNotIn applies the NotIn predicate on the "join_code" field.
+func JoinCodeNotIn(vs ...string) predicate.School {
+	return predicate.School(sql.FieldNotIn(FieldJoinCode, vs...))
+}
+
+// JoinCodeGT applies the GT predicate on the "join_code" field.
+func JoinCodeGT(v string) predicate.School {
+	return predicate.School(sql.FieldGT(FieldJoinCode, v))
+}
+
+// JoinCodeGTE applies the GTE predicate on the "join_code" field.
+func JoinCodeGTE(v string) predicate.School {
+	return predicate.School(sql.FieldGTE(FieldJoinCode, v))
+}
+
+// JoinCodeLT applies the LT predicate on the "join_code" field.
+func JoinCodeLT(v string) predicate.School {
+	return predicate.School(sql.FieldLT(FieldJoinCode, v))
+}
+
+// JoinCodeLTE applies the LTE predicate on the "join_code" field.
+func JoinCodeLTE(v string) predicate.School {
+	return predicate.School(sql.FieldLTE(FieldJoinCode, v))
+}
+
+// JoinCodeContains applies the Contains predicate on the "join_code" field.
+func JoinCodeContains(v string) predicate.School {
+	return predicate.School(sql.FieldContains(FieldJoinCode, v))
+}
+
+// JoinCodeHasPrefix applies the HasPrefix predicate on the "join_code" field.
+func JoinCodeHasPrefix(v string) predicate.School {
+	return predicate.School(sql.FieldHasPrefix(FieldJoinCode, v))
+}
+
+// JoinCodeHasSuffix applies the HasSuffix predicate on the "join_code" field.
+func JoinCodeHasSuffix(v string) predicate.School {
+	return predicate.School(sql.FieldHasSuffix(FieldJoinCode, v))
+}
+
+// JoinCodeEqualFold applies the EqualFold predicate on the "join_code" field.
+func JoinCodeEqualFold(v string) predicate.School {
+	return predicate.School(sql.FieldEqualFold(FieldJoinCode, v))
+}
+
+// JoinCodeContainsFold applies the ContainsFold predicate on the "join_code" field.
+func JoinCodeContainsFold(v string) predicate.School {
+	return predicate.School(sql.FieldContainsFold(FieldJoinCode, v))
+}
+
+// JoinCodeValidUntilTimestampEQ applies the EQ predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampEQ(v time.Time) predicate.School {
+	return predicate.School(sql.FieldEQ(FieldJoinCodeValidUntilTimestamp, v))
+}
+
+// JoinCodeValidUntilTimestampNEQ applies the NEQ predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampNEQ(v time.Time) predicate.School {
+	return predicate.School(sql.FieldNEQ(FieldJoinCodeValidUntilTimestamp, v))
+}
+
+// JoinCodeValidUntilTimestampIn applies the In predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampIn(vs ...time.Time) predicate.School {
+	return predicate.School(sql.FieldIn(FieldJoinCodeValidUntilTimestamp, vs...))
+}
+
+// JoinCodeValidUntilTimestampNotIn applies the NotIn predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampNotIn(vs ...time.Time) predicate.School {
+	return predicate.School(sql.FieldNotIn(FieldJoinCodeValidUntilTimestamp, vs...))
+}
+
+// JoinCodeValidUntilTimestampGT applies the GT predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampGT(v time.Time) predicate.School {
+	return predicate.School(sql.FieldGT(FieldJoinCodeValidUntilTimestamp, v))
+}
+
+// JoinCodeValidUntilTimestampGTE applies the GTE predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampGTE(v time.Time) predicate.School {
+	return predicate.School(sql.FieldGTE(FieldJoinCodeValidUntilTimestamp, v))
+}
+
+// JoinCodeValidUntilTimestampLT applies the LT predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampLT(v time.Time) predicate.School {
+	return predicate.School(sql.FieldLT(FieldJoinCodeValidUntilTimestamp, v))
+}
+
+// JoinCodeValidUntilTimestampLTE applies the LTE predicate on the "join_code_valid_until_timestamp" field.
+func JoinCodeValidUntilTimestampLTE(v time.Time) predicate.School {
+	return predicate.School(sql.FieldLTE(FieldJoinCodeValidUntilTimestamp, v))
 }
 
 // LastUpdatedAtEQ applies the EQ predicate on the "last_updated_at" field.

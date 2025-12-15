@@ -91,6 +91,8 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// JoinCodeValidator is a validator for the "join_code" field. It is called by the builders before save.
+	JoinCodeValidator func(string) error
 	// DefaultJoinCodeValidUntilTimestamp holds the default value on creation for the "join_code_valid_until_timestamp" field.
 	DefaultJoinCodeValidUntilTimestamp time.Time
 	// DefaultLastUpdatedAtTimestamp holds the default value on creation for the "last_updated_at_timestamp" field.

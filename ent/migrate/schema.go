@@ -27,7 +27,7 @@ var (
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
-		{Name: "join_code", Type: field.TypeString, Unique: true},
+		{Name: "join_code", Type: field.TypeString, Unique: true, Size: 6},
 		{Name: "join_code_valid_until_timestamp", Type: field.TypeTime},
 		{Name: "last_updated_at_timestamp", Type: field.TypeTime},
 		{Name: "school_id", Type: field.TypeInt},
@@ -115,6 +115,8 @@ var (
 	SchoolsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "name", Type: field.TypeString, Unique: true},
+		{Name: "join_code", Type: field.TypeString, Unique: true, Size: 6},
+		{Name: "join_code_valid_until_timestamp", Type: field.TypeTime},
 		{Name: "last_updated_at", Type: field.TypeTime},
 		{Name: "user_owned_school", Type: field.TypeInt, Unique: true, Nullable: true},
 	}
@@ -126,7 +128,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "schools_users_owned_school",
-				Columns:    []*schema.Column{SchoolsColumns[3]},
+				Columns:    []*schema.Column{SchoolsColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

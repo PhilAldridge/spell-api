@@ -46,6 +46,34 @@ func (_u *SchoolUpdate) SetNillableName(v *string) *SchoolUpdate {
 	return _u
 }
 
+// SetJoinCode sets the "join_code" field.
+func (_u *SchoolUpdate) SetJoinCode(v string) *SchoolUpdate {
+	_u.mutation.SetJoinCode(v)
+	return _u
+}
+
+// SetNillableJoinCode sets the "join_code" field if the given value is not nil.
+func (_u *SchoolUpdate) SetNillableJoinCode(v *string) *SchoolUpdate {
+	if v != nil {
+		_u.SetJoinCode(*v)
+	}
+	return _u
+}
+
+// SetJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field.
+func (_u *SchoolUpdate) SetJoinCodeValidUntilTimestamp(v time.Time) *SchoolUpdate {
+	_u.mutation.SetJoinCodeValidUntilTimestamp(v)
+	return _u
+}
+
+// SetNillableJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field if the given value is not nil.
+func (_u *SchoolUpdate) SetNillableJoinCodeValidUntilTimestamp(v *time.Time) *SchoolUpdate {
+	if v != nil {
+		_u.SetJoinCodeValidUntilTimestamp(*v)
+	}
+	return _u
+}
+
 // SetLastUpdatedAt sets the "last_updated_at" field.
 func (_u *SchoolUpdate) SetLastUpdatedAt(v time.Time) *SchoolUpdate {
 	_u.mutation.SetLastUpdatedAt(v)
@@ -261,7 +289,20 @@ func (_u *SchoolUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *SchoolUpdate) check() error {
+	if v, ok := _u.mutation.JoinCode(); ok {
+		if err := school.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "School.join_code": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *SchoolUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(school.Table, school.Columns, sqlgraph.NewFieldSpec(school.FieldID, field.TypeInt))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -272,6 +313,12 @@ func (_u *SchoolUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(school.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinCode(); ok {
+		_spec.SetField(school.FieldJoinCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinCodeValidUntilTimestamp(); ok {
+		_spec.SetField(school.FieldJoinCodeValidUntilTimestamp, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.LastUpdatedAt(); ok {
 		_spec.SetField(school.FieldLastUpdatedAt, field.TypeTime, value)
@@ -519,6 +566,34 @@ func (_u *SchoolUpdateOne) SetNillableName(v *string) *SchoolUpdateOne {
 	return _u
 }
 
+// SetJoinCode sets the "join_code" field.
+func (_u *SchoolUpdateOne) SetJoinCode(v string) *SchoolUpdateOne {
+	_u.mutation.SetJoinCode(v)
+	return _u
+}
+
+// SetNillableJoinCode sets the "join_code" field if the given value is not nil.
+func (_u *SchoolUpdateOne) SetNillableJoinCode(v *string) *SchoolUpdateOne {
+	if v != nil {
+		_u.SetJoinCode(*v)
+	}
+	return _u
+}
+
+// SetJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field.
+func (_u *SchoolUpdateOne) SetJoinCodeValidUntilTimestamp(v time.Time) *SchoolUpdateOne {
+	_u.mutation.SetJoinCodeValidUntilTimestamp(v)
+	return _u
+}
+
+// SetNillableJoinCodeValidUntilTimestamp sets the "join_code_valid_until_timestamp" field if the given value is not nil.
+func (_u *SchoolUpdateOne) SetNillableJoinCodeValidUntilTimestamp(v *time.Time) *SchoolUpdateOne {
+	if v != nil {
+		_u.SetJoinCodeValidUntilTimestamp(*v)
+	}
+	return _u
+}
+
 // SetLastUpdatedAt sets the "last_updated_at" field.
 func (_u *SchoolUpdateOne) SetLastUpdatedAt(v time.Time) *SchoolUpdateOne {
 	_u.mutation.SetLastUpdatedAt(v)
@@ -747,7 +822,20 @@ func (_u *SchoolUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (_u *SchoolUpdateOne) check() error {
+	if v, ok := _u.mutation.JoinCode(); ok {
+		if err := school.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "School.join_code": %w`, err)}
+		}
+	}
+	return nil
+}
+
 func (_u *SchoolUpdateOne) sqlSave(ctx context.Context) (_node *School, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(school.Table, school.Columns, sqlgraph.NewFieldSpec(school.FieldID, field.TypeInt))
 	id, ok := _u.mutation.ID()
 	if !ok {
@@ -775,6 +863,12 @@ func (_u *SchoolUpdateOne) sqlSave(ctx context.Context) (_node *School, err erro
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(school.FieldName, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinCode(); ok {
+		_spec.SetField(school.FieldJoinCode, field.TypeString, value)
+	}
+	if value, ok := _u.mutation.JoinCodeValidUntilTimestamp(); ok {
+		_spec.SetField(school.FieldJoinCodeValidUntilTimestamp, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.LastUpdatedAt(); ok {
 		_spec.SetField(school.FieldLastUpdatedAt, field.TypeTime, value)

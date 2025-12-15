@@ -255,6 +255,11 @@ func (_u *GroupUpdate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *GroupUpdate) check() error {
+	if v, ok := _u.mutation.JoinCode(); ok {
+		if err := group.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "Group.join_code": %w`, err)}
+		}
+	}
 	if _u.mutation.SchoolCleared() && len(_u.mutation.SchoolIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Group.school"`)
 	}
@@ -705,6 +710,11 @@ func (_u *GroupUpdateOne) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (_u *GroupUpdateOne) check() error {
+	if v, ok := _u.mutation.JoinCode(); ok {
+		if err := group.JoinCodeValidator(v); err != nil {
+			return &ValidationError{Name: "join_code", err: fmt.Errorf(`ent: validator failed for field "Group.join_code": %w`, err)}
+		}
+	}
 	if _u.mutation.SchoolCleared() && len(_u.mutation.SchoolIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Group.school"`)
 	}
