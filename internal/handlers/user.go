@@ -92,3 +92,23 @@ type Test struct {
 func (h *UserHandler) Test(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(Test{Hello: "hello"})
 }
+
+func (h *UserHandler) JoinGroupOrSchool(w http.ResponseWriter, r *http.Request) {
+	var body dtos.JoinRequest
+
+	if err:= json.NewDecoder(r.Body).Decode(&body);err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	err:= h.service.UserService.JoinGroupOrSchool(r.Context(), body.JoinCode)
+
+	if err != nil {
+		http.Error(w, err.Message, err.StatusCode)
+
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}

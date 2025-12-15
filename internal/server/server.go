@@ -20,9 +20,10 @@ func New(client *ent.Client) http.Handler {
 	userHandler:= handlers.NewUserHandler(service)
 
 	r.Route("/users", func(r chi.Router) {
-		r.Route("/test", func(r chi.Router) {
+		r.Route("/join", func(r chi.Router) {
 			r.Use(service.AuthMiddleware)
 			r.Get("/", userHandler.Test)
+			r.Post("/", userHandler.JoinGroupOrSchool)
 		})
 		r.Route("/logout", func(r chi.Router) {
 			r.Use(service.AuthMiddleware)

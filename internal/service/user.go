@@ -26,12 +26,9 @@ func NewUserService(
 }
 
 func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest) (*ent.User, *apperrors.AppError) {
-	//TODO validate req - put Validate function in dto
-
-	groupIDs := []int{}
-	schoolIDs := []int{}
-	if req.JoinCode != nil {
-		//TODO check join code exists
+	err := req.Validate()
+	if err != nil {
+		return nil, err
 	}
 
 	passwordHash, errHash := auth.HashPassword(req.Password)
@@ -50,7 +47,7 @@ func (s *UserService) Register(ctx context.Context, req dtos.RegistrationRequest
 			userObject.AccountType = user.AccountType(*req.AccountType)
 		}
 
-		newUser, err := txRepo.UserRepository.CreateUser(ctx, &userObject, groupIDs, schoolIDs)
+		newUser, err := txRepo.UserRepository.CreateUser(ctx, &userObject)
 		if err != nil {
 			return nil, err
 		}
@@ -154,4 +151,45 @@ func (s *UserService) GetUserByID(ctx context.Context, id int) (*ent.User, *appe
 	}
 
 	return user, nil
+}
+
+func (s *UserService) JoinGroupOrSchool(ctx context.Context, joinCode string) *apperrors.AppError {
+	userObject, ok := auth.UserFromContext(ctx)
+	if !ok {
+		return apperrors.BadRequest("could not find user information")
+	}
+
+	if userObject.AccountType == user.AccountTypeAdmin {
+		return s.joinSchool(ctx, userObject.ID, joinCode)
+	}
+
+	return s.joinGroup(ctx, userObject.ID, joinCode)
+}
+
+func (s *UserService) joinGroup(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
+	group, err := s.repository.GroupRepository.GetByJoinCode(ctx, joinCode)
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.UserRepository.JoinGroup(ctx, userID, group.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserService) joinSchool(ctx context.Context, userID int, joinCode string) *apperrors.AppError {
+	school, err := s.repository.SchoolRepository.GetByJoinCode(ctx, joinCode)
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.UserRepository.JoinSchool(ctx, userID, school.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

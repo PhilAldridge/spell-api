@@ -12,7 +12,6 @@ type RegistrationRequest struct {
 	Password      string  `json:"password"`
 	Email         string  `json:"email"`
 	AccountType   *string `json:"account_type,omitempty"`
-	JoinCode      *string `json:"join_code,omitempty"`
 	NewSchoolName *string `json:"new_school_name,omitempty"`
 }
 
@@ -24,7 +23,6 @@ func (r RegistrationRequest) Validate() *apperrors.AppError {
 		validation.Field(&r.AccountType,validation.By(func(value interface{}) error {
 			return user.AccountTypeValidator(value.(user.AccountType))
 		})),
-		validation.Field(&r.JoinCode, validation.Length(6,6)),
 		validation.Field(&r.NewSchoolName, validation.Length(0,255)),
 	)
 
@@ -66,4 +64,8 @@ type RefreshAccessRequest struct {
 type RefreshAccessResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in_seconds"`
+}
+
+type JoinRequest struct {
+	JoinCode string `json:"join_code"`
 }

@@ -25,13 +25,11 @@ func NewUserRepository(client *ent.Client) *UserRepository {
 }
 
 // Create a new user
-func (r *UserRepository) CreateUser(ctx context.Context, u *ent.User, groupIDs []int, schoolIDs []int) (*ent.User, *apperrors.AppError) {
+func (r *UserRepository) CreateUser(ctx context.Context, u *ent.User) (*ent.User, *apperrors.AppError) {
 	query := r.client.User.Create().
 		SetName(u.Name).
 		SetEmail(u.Email).
-		SetPasswordHash(u.PasswordHash).
-		AddGroupIDs(groupIDs...).
-		AddSchoolIDs(schoolIDs...)
+		SetPasswordHash(u.PasswordHash)
 
 	if u.AccountType != "" {
 		query = query.SetAccountType(u.AccountType)
@@ -52,7 +50,13 @@ func (r *UserRepository) GetStudentByID(ctx context.Context, id int) (*ent.User,
 			gq.WithSchool()
 		}).
 		WithResults(func(rq *ent.ResultQuery) {
-			rq.GroupBy(result.WordColumn)
+			rq.GroupBy(
+				result.WordColumn,
+			).Aggregate(
+				ent.Count(),
+				ent.Sum(result.FieldCorrect),
+				ent.Mean(result.FieldTimeTakenInSeconds),
+			)
 			result.TestedAtTimestampGT(time.Now().UTC().AddDate(0, -2, 0))
 		}).
 		First(ctx)
@@ -73,4 +77,40 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (*ent
 	}
 
 	return user, nil
+}
+
+func (r *UserRepository) JoinGroup(ctx context.Context, userID int, groupID int ) *apperrors.AppError {
+	err:= r.client.User.UpdateOneID(userID).AddGroupIDs(groupID).Exec(ctx)
+	if err != nil {
+		return apperrors.ParseEntError(err, "could not join group")
+	}
+
+	return nil
+}
+
+func (r *UserRepository) JoinSchool(ctx context.Context, userID int, schoolID int ) *apperrors.AppError {
+	err:= r.client.User.UpdateOneID(userID).AddSchoolIDs(schoolID).Exec(ctx)
+	if err != nil {
+		return apperrors.ParseEntError(err, "could not join school")
+	}
+
+	return nil
+}
+
+func (r *UserRepository) LeaveGroup(ctx context.Context, userID int, groupID int ) *apperrors.AppError {
+	err:= r.client.User.UpdateOneID(userID).RemoveGroupIDs(groupID).Exec(ctx)
+	if err != nil {
+		return apperrors.ParseEntError(err, "could not Leave group")
+	}
+
+	return nil
+}
+
+func (r *UserRepository) LeaveSchool(ctx context.Context, userID int, schoolID int ) *apperrors.AppError {
+	err:= r.client.User.UpdateOneID(userID).RemoveSchoolIDs(schoolID).Exec(ctx)
+	if err != nil {
+		return apperrors.ParseEntError(err, "could not Leave school")
+	}
+
+	return nil
 }
