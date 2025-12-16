@@ -70,7 +70,10 @@ func (s *userService) Register(ctx context.Context, req dtos.RegistrationRequest
 }
 
 func (s *userService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.LoginResponse, *apperrors.AppError) {
-	//TODO Validate request
+	err:= req.Validate()
+	if err != nil {
+		return nil, err
+	}
 
 	user, err := s.repository.UserRepository.GetUserByEmail(ctx, req.Email)
 	if err != nil {
@@ -102,11 +105,15 @@ func (s *userService) Login(ctx context.Context, req dtos.LoginRequest) (*dtos.L
 		fmt.Println(err)
 	}
 
-	// TODO Also return user information
 	return &dtos.LoginResponse{
 		RefreshToken: refeshToken,
 		AccessToken:  accessToken,
 		ExpiresIn:    accessExpiryMins * 60,
+		User: dtos.User{
+			Name: user.Name,
+			Email: user.Email,
+			ID: user.ID,
+		},
 	}, nil
 }
 

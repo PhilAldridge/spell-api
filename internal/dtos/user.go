@@ -17,19 +17,19 @@ type RegistrationRequest struct {
 
 func (r RegistrationRequest) Validate() *apperrors.AppError {
 	err := validation.ValidateStruct(&r,
-		validation.Field(&r.Name, validation.Required, validation.Length(1,30)),
-		validation.Field(&r.Password, validation.Required, validation.Length(8,255)),
+		validation.Field(&r.Name, validation.Required, validation.Length(1, 30)),
+		validation.Field(&r.Password, validation.Required, validation.Length(8, 255)),
 		validation.Field(&r.Email, validation.Required, is.EmailFormat),
-		validation.Field(&r.AccountType,validation.By(func(value interface{}) error {
+		validation.Field(&r.AccountType, validation.By(func(value interface{}) error {
 			return user.AccountTypeValidator(value.(user.AccountType))
 		})),
-		validation.Field(&r.NewSchoolName, validation.Length(0,255)),
+		validation.Field(&r.NewSchoolName, validation.Length(0, 255)),
 	)
 
 	if err != nil {
 		return apperrors.ParseValidationError(err, "request validation failed")
 	}
-		
+
 	return nil
 }
 
@@ -39,15 +39,15 @@ type LoginRequest struct {
 }
 
 func (r LoginRequest) Validate() *apperrors.AppError {
-	err:= validation.ValidateStruct(&r,
-		validation.Field(&r.Password, validation.Required, validation.Length(8,255)),
+	err := validation.ValidateStruct(&r,
+		validation.Field(&r.Password, validation.Required, validation.Length(8, 255)),
 		validation.Field(&r.Email, validation.Required, is.EmailFormat),
 	)
 
 	if err != nil {
 		return apperrors.ParseValidationError(err, "request validation failed")
 	}
-		
+
 	return nil
 }
 
@@ -55,6 +55,7 @@ type LoginResponse struct {
 	AccessToken  string `json:"access_token"`
 	ExpiresIn    int    `json:"expires_in_seconds"`
 	RefreshToken string `json:"refresh_token"`
+	User         User   `json:"user"`
 }
 
 type RefreshAccessRequest struct {
@@ -68,4 +69,10 @@ type RefreshAccessResponse struct {
 
 type JoinRequest struct {
 	JoinCode string `json:"join_code"`
+}
+
+type User struct {
+	Name  string `json:"name"`
+	ID    int    `json:"id"`
+	Email string `json:"email,omitempty"`
 }
